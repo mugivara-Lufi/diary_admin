@@ -1,0 +1,357 @@
+﻿<UserControl x:Class="Diplom.SubjectEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Diplom"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="600">
+
+    <UserControl.Resources>
+        <!-- Стиль для основной кнопки -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="30,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="#5271FF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="6" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4060E8"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для вторичной кнопки -->
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="30,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#666"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F8F9FA"/>
+                    <Setter Property="BorderBrush" Value="#5271FF"/>
+                    <Setter Property="Foreground" Value="#5271FF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для текстовой кнопки -->
+        <Style x:Key="TextButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#5271FF"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F5F7FF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для TextBox с placeholder -->
+        <Style x:Key="FormTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="14,12"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border Background="White" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6">
+                                <Grid>
+                                    <ScrollViewer x:Name="PART_ContentHost" 
+                                                  Margin="14,0,14,0"
+                                                  VerticalAlignment="Center"/>
+                                    <TextBlock Text="{TemplateBinding Tag}" 
+                                               Foreground="#999" 
+                                               FontSize="14"
+                                               Margin="14,0,14,0"
+                                               VerticalAlignment="Center"
+                                               IsHitTestVisible="False"
+                                               x:Name="PlaceholderText"
+                                               Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#5271FF"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsFocused" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Collapsed"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для меток -->
+        <Style x:Key="FormLabel" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#F8F9FA">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="30,20">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="← " 
+                            Style="{StaticResource TextButton}"
+                            Click="BackButton_Click"
+                            Margin="0,0,10,0"
+                            Padding="8"/>
+                    <StackPanel>
+                        <TextBlock Text="{Binding TitleText}" 
+                                   FontSize="22" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#333"/>
+                        <TextBlock Text="{Binding SubtitleText}" 
+                                   FontSize="13" 
+                                   Foreground="#999"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Форма редактирования -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Border Background="White" 
+                    Margin="30,20,30,20"
+                    CornerRadius="8"
+                    BorderBrush="#E0E0E0" 
+                    BorderThickness="1"
+                    Padding="30">
+                <StackPanel MaxWidth="600">
+
+                    <!-- Иконка и заголовок секции -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,25">
+                        <Border Width="50" 
+                                Height="50" 
+                                Background="#F5F7FF" 
+                                CornerRadius="8"
+                                Margin="0,0,15,0">
+                            <TextBlock Text="📚" 
+                                       FontSize="24" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Информация о предмете" 
+                                       FontSize="16" 
+                                       FontWeight="SemiBold"
+                                       Foreground="#333"/>
+                            <TextBlock Text="Заполните основные данные" 
+                                       FontSize="12" 
+                                       Foreground="#999"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Название предмета -->
+                    <StackPanel Margin="0,0,0,25">
+                        <TextBlock Style="{StaticResource FormLabel}">
+                            <Run Text="Название предмета"/>
+                            <Run Text="*" Foreground="#E53E3E"/>
+                        </TextBlock>
+                        <TextBox x:Name="NameTextBox" 
+                                 Style="{StaticResource FormTextBox}"
+                                 Tag="Например: Математика, Физика, История..."
+                                 Text="{Binding CurrentSubject.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Введите полное название учебного предмета" 
+                                   FontSize="12" 
+                                   Foreground="#999"
+                                   Margin="0,6,0,0"/>
+                    </StackPanel>
+
+                    <!-- Разделитель -->
+                    <Border Height="1" Background="#E0E0E0" Margin="0,5,0,25"/>
+
+                    <!-- Информационные блоки -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Блок с подсказками -->
+                        <Border Grid.Column="0"
+                                Background="#F5F7FF" 
+                                Padding="18" 
+                                CornerRadius="8">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <TextBlock Text="💡" 
+                                               FontSize="16" 
+                                               Margin="0,0,8,0"/>
+                                    <TextBlock Text="Полезная информация" 
+                                               FontSize="13" 
+                                               FontWeight="SemiBold"
+                                               Foreground="#5271FF"/>
+                                </StackPanel>
+                                <TextBlock TextWrapping="Wrap" 
+                                           FontSize="12" 
+                                           Foreground="#666"
+                                           LineHeight="18">
+                                    <Run Text="• Название должно быть уникальным"/>
+                                    <LineBreak/>
+                                    <Run Text="• Можно назначить учителей"/>
+                                    <LineBreak/>
+                                    <Run Text="• Используется в расписании"/>
+                                    <LineBreak/>
+                                    <Run Text="• Применяется для оценок"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Статистика (только при редактировании) -->
+                        <Border x:Name="StatsPanel"
+                                Grid.Column="2"
+                                Background="#FFF7ED" 
+                                Padding="18" 
+                                CornerRadius="8"
+                                Visibility="Collapsed">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <TextBlock Text="📊" 
+                                               FontSize="16" 
+                                               Margin="0,0,8,0"/>
+                                    <TextBlock Text="Статистика" 
+                                               FontSize="13" 
+                                               FontWeight="SemiBold"
+                                               Foreground="#C2410C"/>
+                                </StackPanel>
+                                <TextBlock x:Name="TeachersCountText"
+                                           Text="Учителей: 5&#x0a;Классов: 12&#x0a;Учеников: 240"
+                                           FontSize="12" 
+                                           Foreground="#C2410C"
+                                           LineHeight="18"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Дополнительная информация -->
+                    <Border Background="#F0FDF4" 
+                            Padding="15" 
+                            CornerRadius="6"
+                            Margin="0,20,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✓" 
+                                       FontSize="16" 
+                                       Foreground="#16A34A"
+                                       FontWeight="Bold"
+                                       Margin="0,0,10,0"
+                                       VerticalAlignment="Top"/>
+                            <TextBlock TextWrapping="Wrap" 
+                                       FontSize="12" 
+                                       Foreground="#15803D"
+                                       LineHeight="18">
+                                <Run Text="После создания предмета вы сможете назначить учителей."/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+
+        <!-- Кнопки действий -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Padding="30,15">
+            <Grid>
+                <TextBlock Text="* Обязательные поля" 
+                           FontSize="12" 
+                           Foreground="#999"
+                           VerticalAlignment="Center"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Отмена" 
+                            Style="{StaticResource SecondaryButton}" 
+                            Click="CancelButton_Click"
+                            Margin="0,0,10,0"/>
+                    <Button Content="💾 Сохранить" 
+                            Style="{StaticResource PrimaryButton}" 
+                            Click="SaveButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

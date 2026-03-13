@@ -1,0 +1,153 @@
+﻿<UserControl x:Class="Diplom.DaxhBoardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Diplom"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+    <!-- Стиль для карточек статистики -->
+    <Style x:Key="StatCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="Margin" Value="10"/>
+    </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20">
+
+            <!-- Карточки статистики -->
+            <Grid Margin="0,10,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Карточка 1: Ученики -->
+                <Border Grid.Column="0" Style="{StaticResource StatCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="👥" FontSize="28" Margin="0,0,0,10"/>
+                        <TextBlock Text="Ученики" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="StudentsCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock x:Name="StudentsChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Карточка 2: Учителя -->
+                <Border Grid.Column="1" Style="{StaticResource StatCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="👨‍🏫" FontSize="28" Margin="0,0,0,10"/>
+                        <TextBlock Text="Учителя" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="TeachersCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock x:Name="TeachersChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Карточка 3: Классы -->
+                <Border Grid.Column="2" Style="{StaticResource StatCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="🏫" FontSize="28" Margin="0,0,0,10"/>
+                        <TextBlock Text="Классы" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="ClassesCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock x:Name="ClassesChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Карточка 4: Предметы -->
+                <Border Grid.Column="3" Style="{StaticResource StatCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📚" FontSize="28" Margin="0,0,0,10"/>
+                        <TextBlock Text="Предметы" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="SubjectsCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock x:Name="SubjectsChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Второй ряд карточек -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Карточка 5: Оценки -->
+                <Border Grid.Column="0" Style="{StaticResource StatCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="⭐" FontSize="28" Margin="0,0,0,10"/>
+                        <TextBlock Text="Оценки за неделю" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="GradesCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock x:Name="GradesChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Карточка 6: Посещаемость -->
+                <Border Grid.Column="1" Style="{StaticResource StatCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📊" FontSize="28" Margin="0,0,0,10"/>
+                        <TextBlock Text="Посещаемость" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="AttendanceText" Text="0%" FontSize="28" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock x:Name="AttendanceChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Карточка 7: Домашние задания -->
+                <Border Grid.Column="2" Style="{StaticResource StatCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="📝" FontSize="28" Margin="0,0,0,10"/>
+                        <TextBlock Text="Активные ДЗ" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock x:Name="HomeworkCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock x:Name="HomeworkChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Приветственное сообщение -->
+            <Border Background="White" 
+                    BorderBrush="#E0E0E0" 
+                    BorderThickness="1" 
+                    CornerRadius="8" 
+                    Padding="40" 
+                    Margin="10">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="👋" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                    <TextBlock Text="Добро пожаловать в панель администратора!" 
+                               FontSize="20" 
+                               FontWeight="SemiBold"
+                               Foreground="#333"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10"/>
+                    <TextBlock Text="Здесь вы можете управлять всеми аспектами системы электронного дневника" 
+                               FontSize="14" 
+                               Foreground="#999"
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               MaxWidth="400"/>
+
+                    <!-- Быстрые действия -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                        <Button Content="👥 Ученики" Background="#5271FF" Foreground="White" 
+                                Padding="15,8" Margin="5" Cursor="Hand"
+                                Click="StudentsButton_Click"/>
+                        <Button Content="👨‍🏫 Учителя" Background="#28A745" Foreground="White" 
+                                Padding="15,8" Margin="5" Cursor="Hand"
+                                Click="TeachersButton_Click"/>
+                        <Button Content="🏫 Классы" Background="#17A2B8" Foreground="White" 
+                                Padding="15,8" Margin="5" Cursor="Hand"
+                                Click="ClassesButton_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

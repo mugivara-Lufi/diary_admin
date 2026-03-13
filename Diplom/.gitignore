@@ -1,0 +1,22 @@
+# Специфичные файлы Visual Studio
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+
+# Папки сборки (самое важное!)
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Пакеты и зависимости
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Конфиденциальные настройки (локальные)
+appsettings.Development.json

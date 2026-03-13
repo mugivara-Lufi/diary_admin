@@ -1,0 +1,208 @@
+﻿<Window x:Class="Diplom.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Diplom"
+        mc:Ignorable="d"
+        Title="Дневник" Height="600" Width="900" 
+        WindowState="Maximized"
+>
+
+    <Window.Resources>
+        <!-- Стиль для TextBox с placeholder -->
+        <!-- Исправленный стиль для TextBox с placeholder -->
+        <Style x:Key="PlaceholderTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border Background="White" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+                                <Grid>
+                                    <ScrollViewer x:Name="PART_ContentHost" 
+                                          Margin="12,0,12,0"
+                                          VerticalAlignment="Center"/>
+                                    <TextBlock Text="{TemplateBinding Tag}" 
+                                       Foreground="#999" 
+                                       FontSize="14"
+                                       Margin="12,0,12,0"
+                                       VerticalAlignment="Center"
+                                       IsHitTestVisible="False"
+                                       x:Name="PlaceholderText"
+                                       Visibility="Collapsed"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- Показать placeholder только если поле пустое -->
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <!-- Скрыть placeholder при фокусе -->
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="PlaceholderText" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                            <!-- Подсветка границы при фокусе -->
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#5271FF"/>
+                            </Trigger>
+                            <!-- Скрыть placeholder если есть текст -->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsFocused" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Collapsed"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- Стиль для PasswordBox с placeholder -->
+        <Style x:Key="PlaceholderPasswordBox" TargetType="PasswordBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Grid>
+                            <Border Background="White" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4">
+                                <Grid>
+                                    <ScrollViewer x:Name="PART_ContentHost" 
+                                                  Margin="12,0,12,0"
+                                                  VerticalAlignment="Center"/>
+                                    <TextBlock Text="{TemplateBinding Tag}" 
+                                               Foreground="#999" 
+                                               FontSize="14"
+                                               Margin="12,0,12,0"
+                                               VerticalAlignment="Center"
+                                               IsHitTestVisible="False"
+                                               x:Name="PlaceholderText"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="PlaceholderText" Property="Opacity" Value="0"/>
+                                <Setter Property="BorderBrush" Value="#5271FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Panel - Login Form -->
+        <Grid Grid.Column="0" Background="White">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="320">
+
+                <!-- Logo and Title -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
+                    <Border Width="32" Height="32" Background="#5271FF" CornerRadius="4" Margin="0,0,10,0">
+                        <Path Data="M8,8 L24,8 L16,24 Z" Fill="White" Stretch="Uniform" Margin="6"/>
+                    </Border>
+                    <TextBlock Text="ДНЕВНИК" FontSize="16" FontWeight="SemiBold" 
+                               Foreground="#333" VerticalAlignment="Center"/>
+                </StackPanel>
+
+ 
+                <!-- Login Title -->
+                <TextBlock Text="Вход" FontSize="20" FontWeight="Regular" 
+                           Foreground="#555" Margin="0,0,0,30"/>
+
+                <!-- Email Input with Placeholder -->
+                <TextBox x:Name="LoginTextBox" 
+                         Style="{StaticResource PlaceholderTextBox}"
+                         Tag="Введите эл. почту"
+                         Margin="0,0,0,20"/>
+
+                <!-- Password Input with Placeholder -->
+                <PasswordBox x:Name="PasswordBox"
+                             Style="{StaticResource PlaceholderPasswordBox}"
+                             Tag="Введите пароль"
+                             Margin="0,0,0,15"
+                             PasswordChanged="PasswordBox_PasswordChanged"/>
+
+                <!-- Remember Me & Forgot Password -->
+                <Grid Margin="0,0,0,25">
+                    <CheckBox Content="Запомнить меня" FontSize="12" 
+                              Foreground="#666" VerticalAlignment="Center"/>
+                    <TextBlock Text="Забыли пароль?" FontSize="12" 
+                               Foreground="#5271FF" HorizontalAlignment="Right" 
+                               VerticalAlignment="Center" Cursor="Hand"/>
+                </Grid>
+
+                <!-- Login Button -->
+                <Button x:Name="LoginButton" Content="ВОЙТИ" Height="45" Background="#5271FF" 
+                        Foreground="White" FontSize="13" FontWeight="SemiBold"
+                        BorderThickness="0" Cursor="Hand" Margin="0,0,0,15"
+                        Click="LoginButton_Click">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#5271FF"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                                CornerRadius="6" Padding="5">
+                                            <ContentPresenter HorizontalAlignment="Center" 
+                                                            VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#4060E8"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+               
+
+            </StackPanel>
+        </Grid>
+
+        <!-- Right Panel - Decorative Image -->
+        <Grid Grid.Column="1">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#1E5BA8" Offset="0.0"/>
+                    <GradientStop Color="#2B7FD4" Offset="0.5"/>
+                    <GradientStop Color="#4CAF50" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+        </Grid>
+
+    </Grid>
+</Window>
