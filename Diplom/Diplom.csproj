@@ -9,8 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="photo_2026-03-27_20-28-24.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="iTextSharp" Version="5.5.13.4" />
     <PackageReference Include="supabase-csharp" Version="0.16.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="image\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="photo_2026-03-27_20-28-24.jpg" />
   </ItemGroup>
 
 </Project>

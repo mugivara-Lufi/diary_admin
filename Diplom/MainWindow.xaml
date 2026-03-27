@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Diplom"
         mc:Ignorable="d"
-        Title="Дневник" Height="600" Width="900" 
-        WindowState="Maximized"
+        Title="Дневник" Height="600" Width="900 " 
+        WindowState="Maximized" Icon="/photo_2026-03-27_20-28-24.jpg" 
 >
 
     <Window.Resources>
@@ -126,8 +126,8 @@
 
                 <!-- Logo and Title -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
-                    <Border Width="32" Height="32" Background="#5271FF" CornerRadius="4" Margin="0,0,10,0">
-                        <Path Data="M8,8 L24,8 L16,24 Z" Fill="White" Stretch="Uniform" Margin="6"/>
+                    <Border Width="32" Height="32"  CornerRadius="4" Margin="0,0,10,0">
+                        <Image Source="/photo_2026-03-27_20-28-24.jpg" ></Image>
                     </Border>
                     <TextBlock Text="ДНЕВНИК" FontSize="16" FontWeight="SemiBold" 
                                Foreground="#333" VerticalAlignment="Center"/>

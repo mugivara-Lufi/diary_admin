@@ -502,118 +502,173 @@ d:DesignHeight="500" d:DesignWidth="600">
                     <Border Height="1" Background="#E0E0E0" Margin="0,10,0,20"/>
 
                     <!-- Родители -->
+                    <!-- Вставьте этот блок вместо текущего блока с родителями -->
                     <StackPanel>
                         <Grid Margin="0,0,0,15">
                             <TextBlock Text="👨‍👩‍👧‍👦 Родители и опекуны" 
-                                       FontSize="16" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="#333"/>
-                            <Button Content="➕ Добавить" 
-                                    Style="{StaticResource AddButton}"
-                                    HorizontalAlignment="Right"
-                                    Click="AddParentButton_Click"/>
+                   FontSize="16" 
+                   FontWeight="SemiBold" 
+                   Foreground="#333"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="➕ Выбрать из списка" 
+                    Style="{StaticResource AddButton}"
+                    Click="SelectExistingParent_Click"
+                    Margin="0,0,8,0"/>
+                                <Button Content="➕ Создать нового" 
+                    Style="{StaticResource PrimaryButton}"
+                    Click="AddParentButton_Click"
+                    Background="#5271FF"
+                    Foreground="White"/>
+                            </StackPanel>
                         </Grid>
 
                         <Border Background="#F8F9FA" 
+            BorderBrush="#E0E0E0" 
+            BorderThickness="1" 
+            Padding="20" 
+            CornerRadius="8"
+            MinHeight="100">
+                            <StackPanel>
+                                <ItemsControl x:Name="ParentsItemsControl">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="White" 
                                 BorderBrush="#E0E0E0" 
                                 BorderThickness="1" 
-                                Padding="20" 
-                                CornerRadius="8"
-                                MinHeight="100">
-                            <ItemsControl x:Name="ParentsItemsControl">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="White" 
-                                                BorderBrush="#E0E0E0" 
-                                                BorderThickness="1" 
-                                                Padding="15" 
-                                                Margin="0,0,0,10" 
-                                                CornerRadius="6">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
+                                Padding="15" 
+                                Margin="0,0,0,10" 
+                                CornerRadius="6">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
 
-                                                <!-- Иконка -->
-                                                <Border Grid.Column="0" 
-                                                        Width="45" 
-                                                        Height="45" 
-                                                        Background="#F5F7FF"
-                                                        CornerRadius="6"
-                                                        Margin="0,0,15,0">
-                                                    <TextBlock Text="👤" 
-                                                               FontSize="20" 
-                                                               HorizontalAlignment="Center" 
-                                                               VerticalAlignment="Center"/>
-                                                </Border>
+                                                    <!-- Иконка -->
+                                                    <Border Grid.Column="0" 
+                                        Width="45" 
+                                        Height="45" 
+                                        Background="#F5F7FF"
+                                        CornerRadius="6"
+                                        Margin="0,0,15,0">
+                                                        <TextBlock Text="👤" 
+                                               FontSize="20" 
+                                               HorizontalAlignment="Center" 
+                                               VerticalAlignment="Center"/>
+                                                    </Border>
 
-                                                <!-- Информация -->
-                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding FullName}" 
-                                                               FontWeight="SemiBold" 
-                                                               FontSize="14"
-                                                               Foreground="#333"/>
-                                                    <TextBlock Text="{Binding Phone}" 
-                                                               FontSize="12" 
-                                                               Foreground="#666"
-                                                               Margin="0,2,0,0"/>
-                                                    <TextBlock Text="{Binding Email}" 
-                                                               FontSize="12" 
-                                                               Foreground="#666"
-                                                               Margin="0,2,0,0"/>
-                                                </StackPanel>
+                                                    <!-- Информация -->
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding FullName}" 
+                                               FontWeight="SemiBold" 
+                                               FontSize="14"
+                                               Foreground="#333"/>
+                                                        <TextBlock x:Name="PhoneText" 
+                                               Text="{Binding Phone}" 
+                                               FontSize="12" 
+                                               Foreground="#666"
+                                               Margin="0,2,0,0"/>
+                                                        <TextBlock x:Name="EmailText" 
+                                               Text="{Binding Email}" 
+                                               FontSize="12" 
+                                               Foreground="#666"
+                                               Margin="0,2,0,0"/>
+                                                    </StackPanel>
 
-                                                <!-- Кнопка удаления -->
-                                                <Button Grid.Column="2" 
-                                                        Content="🗑️" 
-                                                        Background="Transparent" 
-                                                        BorderThickness="0"
-                                                        Foreground="#E53E3E"
-                                                        FontSize="16"
-                                                        Width="35"
-                                                        Height="35"
-                                                        Cursor="Hand"
-                                                        Click="RemoveParent_Click"
-                                                        Tag="{Binding}"
-                                                        ToolTip="Удалить">
-                                                    <Button.Style>
-                                                        <Style TargetType="Button">
-                                                            <Setter Property="Template">
-                                                                <Setter.Value>
-                                                                    <ControlTemplate TargetType="Button">
-                                                                        <Border Background="{TemplateBinding Background}" 
-                                                                                CornerRadius="6"
-                                                                                Padding="5">
-                                                                            <ContentPresenter HorizontalAlignment="Center" 
-                                                                                            VerticalAlignment="Center"/>
-                                                                        </Border>
-                                                                    </ControlTemplate>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                            <Style.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter Property="Background" Value="#FFF5F5"/>
-                                                                </Trigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Button.Style>
-                                                </Button>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                                    <!-- Кнопка редактирования -->
+                                                    <Button Grid.Column="2" 
+                                        Content="✏️" 
+                                        Background="Transparent" 
+                                        BorderThickness="0"
+                                        Foreground="#5271FF"
+                                        FontSize="16"
+                                        Width="35"
+                                        Height="35"
+                                        Cursor="Hand"
+                                        Click="EditParent_Click"
+                                        Tag="{Binding}"
+                                        ToolTip="Редактировать">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button">
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border Background="{TemplateBinding Background}" 
+                                                                CornerRadius="6"
+                                                                Padding="5">
+                                                                                <ContentPresenter HorizontalAlignment="Center" 
+                                                                            VerticalAlignment="Center"/>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="#F0F4FF"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
 
-                            <!-- Заглушка, если нет родителей -->
-                            <!-- Добавьте в код-бехинд проверку на пустой список -->
+                                                    <!-- Кнопка удаления -->
+                                                    <Button Grid.Column="3" 
+                                        Content="🗑️" 
+                                        Background="Transparent" 
+                                        BorderThickness="0"
+                                        Foreground="#E53E3E"
+                                        FontSize="16"
+                                        Width="35"
+                                        Height="35"
+                                        Cursor="Hand"
+                                        Click="RemoveParent_Click"
+                                        Tag="{Binding}"
+                                        ToolTip="Удалить">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button">
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border Background="{TemplateBinding Background}" 
+                                                                CornerRadius="6"
+                                                                Padding="5">
+                                                                                <ContentPresenter HorizontalAlignment="Center" 
+                                                                            VerticalAlignment="Center"/>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="#FFF5F5"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Заглушка, если нет родителей -->
+                                <TextBlock x:Name="EmptyParentsText" 
+                       Text="Нет добавленных родителей. Нажмите 'Создать нового' или 'Выбрать из списка'" 
+                       FontSize="12" 
+                       Foreground="#999"
+                       HorizontalAlignment="Center"
+                       Margin="0,10,0,10"
+                       Visibility="Collapsed"/>
+                            </StackPanel>
                         </Border>
 
-                        <TextBlock Text="ℹ️ Добавьте контактную информацию родителей или опекунов" 
-                                   FontSize="12" 
-                                   Foreground="#999"
-                                   Margin="0,10,0,0"/>
+                        <TextBlock Text="ℹ️ Вы можете добавить нескольких родителей для ученика" 
+               FontSize="12" 
+               Foreground="#999"
+               Margin="0,10,0,0"/>
                     </StackPanel>
 
                 </StackPanel>
