@@ -221,11 +221,11 @@
                 <!-- Заголовок и поиск -->
                 <Grid Grid.Row="0" Margin="0,0,0,20">
                     <StackPanel>
-                        <TextBlock Text="👨‍🏫 Управление учителями" 
+                        <TextBlock Text="👨‍🏫 Управление преподавателями" 
                                    FontSize="22" 
                                    FontWeight="SemiBold" 
                                    Foreground="#333"/>
-                        <TextBlock Text="Просмотр и редактирование списка учителей" 
+                        <TextBlock Text="Просмотр и редактирование списка преподавателей" 
                                    FontSize="13" 
                                    Foreground="#999"
                                    Margin="0,5,0,0"/>
@@ -237,14 +237,14 @@
                         <TextBox x:Name="SearchTextBox" 
                                  Style="{StaticResource SearchTextBox}" 
                                  Width="280" 
-                                 Tag="Поиск по имени, предмету..." 
+                                 Tag="Поиск по имени, дисциплине..." 
                                  TextChanged="SearchTextBox_TextChanged"/>
                     </StackPanel>
                 </Grid>
 
                 <!-- Кнопки действий -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button Content="➕ Добавить учителя" 
+                    <Button Content="➕ Добавить преподавателя" 
                             Style="{StaticResource PrimaryButton}" 
                             Click="AddTeacher_Click"/>
                     <Button Content="✏️ Редактировать" 
@@ -267,7 +267,7 @@
                             Margin="20,0,0,0"
                             HorizontalAlignment="Right">
                         <TextBlock x:Name="CountText" 
-                                   Text="0 учителей" 
+                                   Text="0 преподавателей" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#5271FF"/>
@@ -290,9 +290,10 @@
                       SelectionMode="Single"
                       SelectionUnit="FullRow"
                       HeadersVisibility="Column"
-                      BorderThickness="0">
+                      BorderThickness="0"  >
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Номер" Width="70" Binding="{Binding Id}">
+                    <DataGridTextColumn Header="Номер" Width="75
+                                        " Binding="{Binding Id}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="#999"/>
@@ -307,14 +308,14 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Предмет" Width="150" Binding="{Binding SubjectName}">
+                    <DataGridTextColumn Header="Дисциплина" Width="250" Binding="{Binding SubjectName}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontWeight" Value="Medium"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Email" Width="200" Binding="{Binding Email}"/>
+                    <DataGridTextColumn Header="Электронная почта" Width="200" Binding="{Binding Email}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

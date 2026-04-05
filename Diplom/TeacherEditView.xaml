@@ -377,7 +377,7 @@
                             Padding="8"/>
                     <StackPanel>
                         <TextBlock x:Name="TitleText" 
-                                   Text="Добавление учителя" 
+                                   Text="Добавление преподавателя" 
                                    FontSize="22" 
                                    FontWeight="SemiBold" 
                                    Foreground="#333"/>
@@ -410,12 +410,12 @@
                     <!-- ФИО -->
                     <StackPanel Margin="0,0,0,20">
                         <TextBlock Style="{StaticResource FormLabel}">
-        <Run Text="ФИО учителя"/>
+        <Run Text="ФИО преподавателя"/>
         <Run Text="*" Foreground="#E53E3E"/>
                         </TextBlock>
                         <TextBox x:Name="FullNameTextBox" 
              Style="{StaticResource FormTextBox}"
-             Tag="Введите полное имя учителя"
+             Tag="Введите полное имя преподавателя"
              Text="{Binding Teacher.FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
              PreviewTextInput="FullNameTextBox_PreviewTextInput"
              TextChanged="FullNameTextBox_TextChanged"/>
@@ -428,7 +428,7 @@
                     <!-- Предмет -->
                     <StackPanel Margin="0,0,0,20">
                         <TextBlock Style="{StaticResource FormLabel}">
-                            <Run Text="Преподаваемый предмет"/>
+                            <Run Text="Преподаваемая дисциплина"/>
                             <Run Text="*" Foreground="#E53E3E"/>
                         </TextBlock>
                         <ComboBox x:Name="SubjectComboBox" 
@@ -436,7 +436,7 @@
                                   DisplayMemberPath="Name"
                                   SelectedValuePath="Id"
                                   SelectedValue="{Binding Teacher.SubjectId, Mode=TwoWay}" Height="42" />
-                        <TextBlock Text="Выберите основной предмет преподавания" 
+                        <TextBlock Text="Выберите основную дисциплину преподавания" 
                                    FontSize="12" 
                                    Foreground="#999"
                                    Margin="0,6,0,0"/>
@@ -454,7 +454,7 @@
 
                     <!-- Email -->
                     <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="Email" Style="{StaticResource FormLabel}"/>
+                        <TextBlock Text="Электронная почта" Style="{StaticResource FormLabel}"/>
                         <TextBox x:Name="EmailTextBox" 
              Style="{StaticResource FormTextBox}"
              Tag="example@school.com"

@@ -69,7 +69,7 @@ namespace Diplom
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки учителей: {ex.Message}", "Ошибка",
+                MessageBox.Show($"Ошибка загрузки преподавателей: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 StatusText.Text = "Ошибка загрузки";
             }
@@ -81,7 +81,7 @@ namespace Diplom
 
         private void UpdateStatus()
         {
-            CountText.Text = $"{_teachers.Count} учителей";
+            CountText.Text = $"{_teachers.Count} преподавателей";
             StatusText.Text = "Готово";
         }
 
@@ -101,7 +101,7 @@ namespace Diplom
             var selectedTeacher = TeachersGrid.SelectedItem as Teacher;
             if (selectedTeacher == null)
             {
-                MessageBox.Show("Выберите учителя для редактирования", "Информация",
+                MessageBox.Show("Выберите преподавателя для редактирования", "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -114,13 +114,13 @@ namespace Diplom
             var selectedTeacher = TeachersGrid.SelectedItem as Teacher;
             if (selectedTeacher == null)
             {
-                MessageBox.Show("Выберите учителя для удаления", "Информация",
+                MessageBox.Show("Выберите преподавателя для удаления", "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
             var result = MessageBox.Show(
-                $"Вы уверены, что хотите удалить учителя \"{selectedTeacher.FullName}\"?\n\nЭто действие нельзя отменить.",
+                $"Вы уверены, что хотите удалить преподавателя \"{selectedTeacher.FullName}\"?\n\nЭто действие нельзя отменить.",
                 "Подтверждение удаления",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -269,5 +269,7 @@ namespace Diplom
         {
             LastUpdateText.Text = GetTimeAgo(_lastUpdate);
         }
+
+
     }
 }
