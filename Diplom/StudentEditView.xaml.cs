@@ -113,7 +113,7 @@ namespace Diplom
                 var result = await SupabaseClient.ExecuteQuery("classes", "select=*&order=name");
                 Classes.Clear();
 
-                Classes.Add(new Class { Id = 0, Name = "Не назначен" });
+                Classes.Add(new Class { Id = 0, Name = "Не назначена" });
 
                 foreach (var item in result)
                 {
@@ -138,7 +138,7 @@ namespace Diplom
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки классов: {ex.Message}");
+                MessageBox.Show($"Ошибка загрузки групп: {ex.Message}");
             }
         }
 
@@ -184,7 +184,7 @@ namespace Diplom
 
         private void UpdateTitle()
         {
-            TitleText.Text = Student.Id > 0 ? "Редактирование ученика" : "Добавление ученика";
+            TitleText.Text = Student.Id > 0 ? "Редактирование студента" : "Добавление студента";
             SaveButton.Content = Student.Id > 0 ? "Обновить" : "Создать";
         }
 
@@ -192,7 +192,7 @@ namespace Diplom
         {
             if (string.IsNullOrWhiteSpace(Student.FullName))
             {
-                MessageBox.Show("Введите ФИО ученика", "Ошибка",
+                MessageBox.Show("Введите ФИО студента", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 FullNameTextBox.Focus();
                 return false;
@@ -241,7 +241,7 @@ namespace Diplom
                     try
                     {
                         await SupabaseClient.AddStudentParent(Student.Id, newParent.Id);
-                        MessageBox.Show("Родитель добавлен и привязан к ученику", "Успех",
+                        MessageBox.Show("Родитель добавлен и привязан к студенту", "Успех",
                             MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
@@ -489,7 +489,7 @@ namespace Diplom
 
                 if (Student.Id > 0)
                 {
-                    // Обновление существующего ученика
+                    // Обновление существующего студента
                     await SupabaseClient.UpdateStudent(
                         Student.Id,
                         Student.FullName,
@@ -500,7 +500,7 @@ namespace Diplom
                 }
                 else
                 {
-                    // Добавление нового ученика с созданием пользователя
+                    // Добавление нового студента с созданием пользователя
                     var (studentResult, userResult) = await SupabaseClient.AddStudentWithUser(
                         Student.FullName,
                         Student.BirthDate?.ToString("yyyy-MM-dd"),
@@ -514,11 +514,11 @@ namespace Diplom
 
                         string login = userResult[0]["login"].Value<string>();
                         MessageBox.Show(
-                            $"Ученик успешно добавлен!\n\n" +
+                            $"Студент успешно добавлен!\n\n" +
                             $"Данные для входа:\n" +
                             $"Логин: {login}\n" +
                             $"Пароль: password123\n\n" +
-                            $"Сообщите эти данные ученику для входа в систему.",
+                            $"Сообщите эти данные студенту для входа в систему.",
                             "Успех",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information);
@@ -567,7 +567,7 @@ namespace Diplom
                 }
                 else
                 {
-                    MessageBox.Show("Ученик успешно обновлен", "Успех",
+                    MessageBox.Show("Студент успешно обновлен", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }

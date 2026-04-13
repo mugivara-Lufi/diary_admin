@@ -6,8 +6,6 @@
              xmlns:local="clr-namespace:Diplom"
              mc:Ignorable="d" d:DesignWidth="600" Height="689">
 
-
-
     <Grid Background="#F8F9FA">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -46,9 +44,9 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="30">
                 <StackPanel>
 
-                    <!-- Класс -->
+                    <!-- Группа -->
                     <StackPanel x:Name="ClassInfoPanel" Margin="0,0,0,20">
-                        <TextBlock Text="Класс" 
+                        <TextBlock Text="Группа" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#333"
@@ -57,15 +55,15 @@
                                    FontSize="13" 
                                    Foreground="#666"
                                    Padding="12,10"/>
-                        <TextBlock Text="Урок будет добавлен для выбранного класса" 
+                        <TextBlock Text="Занятие будет добавлено для выбранной группы" 
                                    FontSize="11" 
                                    Foreground="#999"
                                    Margin="0,5,0,0"/>
                     </StackPanel>
 
-                    <!-- Предмет -->
+                    <!-- Дисциплина -->
                     <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="Предмет *" 
+                        <TextBlock Text="Дисциплина *" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#333"
@@ -77,9 +75,9 @@
                                   SelectionChanged="SubjectComboBox_SelectionChanged" Height="40"/>
                     </StackPanel>
 
-                    <!-- Учитель -->
+                    <!-- Преподаватель -->
                     <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="Учитель *" 
+                        <TextBlock Text="Преподаватель *" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#333"
@@ -89,30 +87,28 @@
                                   DisplayMemberPath="FullName"
                                   SelectedValuePath="Id"
                                   SelectionChanged="TeacherComboBox_SelectionChanged" Height="40"/>
-                        <TextBlock Text="Выберите учителя, который ведет этот предмет" 
+                        <TextBlock Text="Выберите преподавателя, который ведет эту дисциплину" 
                                    FontSize="11" 
                                    Foreground="#999"
                                    Margin="0,5,0,0"/>
                     </StackPanel>
 
-                    <!-- Дата урока -->
+                    <!-- Дата занятия -->
                     <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="Дата урока *" 
+                        <TextBlock Text="Дата занятия *" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#333"
                                    Margin="0,0,0,8"/>
                         <DatePicker x:Name="LessonDatePicker"
-            Style="{StaticResource FormDatePicker}"
-            SelectedDate="{Binding CurrentSchedule.LessonDate, Mode=TwoWay}"
-            SelectedDateChanged="LessonDatePicker_SelectedDateChanged"/>
-
-
+                                    Style="{StaticResource FormDatePicker}"
+                                    SelectedDate="{Binding CurrentSchedule.LessonDate, Mode=TwoWay}"
+                                    SelectedDateChanged="LessonDatePicker_SelectedDateChanged"/>
                     </StackPanel>
 
-                    <!-- Номер урока -->
+                    <!-- Номер занятия -->
                     <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="Номер урока *" 
+                        <TextBlock Text="Номер занятия *" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#333"
@@ -122,7 +118,7 @@
                                   DisplayMemberPath="Value"
                                   SelectedValuePath="Key"
                                   SelectionChanged="LessonNumberComboBox_SelectionChanged" Height="40"/>
-                        <TextBlock Text="Выберите порядковый номер урока в расписании" 
+                        <TextBlock Text="Выберите порядковый номер занятия в расписании" 
                                    FontSize="11" 
                                    Foreground="#999"
                                    Margin="0,5,0,0"/>
@@ -130,7 +126,7 @@
 
                     <!-- Тема -->
                     <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="Тема урока" 
+                        <TextBlock Text="Тема занятия" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#333"
@@ -154,7 +150,7 @@
                             CornerRadius="6"
                             Margin="0,0,0,20">
                         <StackPanel>
-                            <TextBlock Text="🕐 Время урока" 
+                            <TextBlock Text="🕐 Время занятия" 
                                        FontSize="13" 
                                        FontWeight="SemiBold"
                                        Foreground="#5271FF"

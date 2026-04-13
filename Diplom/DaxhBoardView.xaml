@@ -34,7 +34,7 @@
                 <Border Grid.Column="0" Style="{StaticResource StatCardStyle}">
                     <StackPanel>
                         <TextBlock Text="👥" FontSize="28" Margin="0,0,0,10"/>
-                        <TextBlock Text="Ученики" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock Text="Студенты" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
                         <TextBlock x:Name="StudentsCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
                         <TextBlock x:Name="StudentsChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
                     </StackPanel>
@@ -44,7 +44,7 @@
                 <Border Grid.Column="1" Style="{StaticResource StatCardStyle}">
                     <StackPanel>
                         <TextBlock Text="👨‍🏫" FontSize="28" Margin="0,0,0,10"/>
-                        <TextBlock Text="Учителя" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock Text="Преподаватели" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
                         <TextBlock x:Name="TeachersCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
                         <TextBlock x:Name="TeachersChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
                     </StackPanel>
@@ -54,7 +54,7 @@
                 <Border Grid.Column="2" Style="{StaticResource StatCardStyle}">
                     <StackPanel>
                         <TextBlock Text="🏫" FontSize="28" Margin="0,0,0,10"/>
-                        <TextBlock Text="Классы" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock Text="Группы" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
                         <TextBlock x:Name="ClassesCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
                         <TextBlock x:Name="ClassesChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
                     </StackPanel>
@@ -64,7 +64,7 @@
                 <Border Grid.Column="3" Style="{StaticResource StatCardStyle}">
                     <StackPanel>
                         <TextBlock Text="📚" FontSize="28" Margin="0,0,0,10"/>
-                        <TextBlock Text="Предметы" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
+                        <TextBlock Text="Дисциплины" FontSize="13" Foreground="#999" Margin="0,0,0,5"/>
                         <TextBlock x:Name="SubjectsCountText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#333"/>
                         <TextBlock x:Name="SubjectsChangeText" Text="Загрузка..." FontSize="11" Foreground="#999" Margin="0,5,0,0"/>
                     </StackPanel>

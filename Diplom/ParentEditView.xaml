@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Diplom"
              mc:Ignorable="d" 
-    d:DesignHeight="450" d:DesignWidth="500">
+             d:DesignHeight="450" d:DesignWidth="500">
 
     <UserControl.Resources>
-        
+
         <Style x:Key="FormLabel" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="Foreground" Value="#333"/>
@@ -129,21 +129,21 @@
                 CornerRadius="8"
                 Padding="25">
             <StackPanel>
-                <TextBlock Text="👨‍👩‍👧 Добавление родителя" 
+                <TextBlock Text="👨‍👩‍👧 Добавление законного представителя" 
                            FontSize="20" 
                            FontWeight="SemiBold" 
                            Foreground="#333"
                            Margin="0,0,0,20"/>
 
-                <!-- ФИО родителя -->
+                <!-- ФИО законного представителя -->
                 <StackPanel Margin="0,0,0,20">
                     <TextBlock Style="{StaticResource FormLabel}">
-                        <Run Text="ФИО родителя"/>
+                        <Run Text="ФИО законного представителя"/>
                         <Run Text="*" Foreground="#E53E3E"/>
                     </TextBlock>
                     <TextBox x:Name="FullNameTextBox" 
                              Style="{StaticResource FormTextBox}"
-                             Tag="Введите полное имя родителя"/>
+                             Tag="Введите полное имя законного представителя"/>
                 </StackPanel>
 
                 <!-- Телефон -->

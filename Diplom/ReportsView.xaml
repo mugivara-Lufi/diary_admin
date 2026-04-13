@@ -474,9 +474,9 @@
                                             Width="160"/>
                             </StackPanel>
 
-                            <!-- Класс -->
+                            <!-- Группа -->
                             <StackPanel x:Name="ClassFilterPanel" Grid.Column="2" Margin="0,0,15,0">
-                                <TextBlock Text="Класс" Style="{StaticResource FormLabel}"/>
+                                <TextBlock Text="Группа" Style="{StaticResource FormLabel}"/>
                                 <ComboBox x:Name="ClassComboBox"
                                           Style="{StaticResource FormComboBox}"
                                           Width="180"

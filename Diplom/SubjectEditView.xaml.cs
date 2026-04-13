@@ -35,7 +35,7 @@ namespace Diplom
 
             if (subject != null)
             {
-                // Редактирование существующего предмета
+                // Редактирование существующей дисциплины
                 CurrentSubject = new Subject
                 {
                     Id = subject.Id,
@@ -44,7 +44,7 @@ namespace Diplom
             }
             else
             {
-                // Создание нового предмета
+                // Создание новой дисциплины
                 CurrentSubject = new Subject();
             }
 
@@ -61,8 +61,8 @@ namespace Diplom
             }
         }
 
-        public string TitleText => CurrentSubject?.Id > 0 ? "✏️ Редактирование предмета" : "➕ Добавление предмета";
-        public string SubtitleText => CurrentSubject?.Id > 0 ? "Изменение информации о предмете" : "Создание нового учебного предмета";
+        public string TitleText => CurrentSubject?.Id > 0 ? "✏️ Редактирование дисциплины" : "➕ Добавление дисциплины";
+        public string SubtitleText => CurrentSubject?.Id > 0 ? "Изменение информации о дисциплине" : "Создание новой учебной дисциплины";
 
         private async System.Threading.Tasks.Task LoadSubjectStats()
         {
@@ -73,12 +73,12 @@ namespace Diplom
                     // Показываем панель статистики только при редактировании
                     StatsPanel.Visibility = Visibility.Visible;
 
-                    // Получаем количество учителей по этому предмету
+                    // Получаем количество преподавателей по этой дисциплине
                     var teachersCount = await GetTeachersCount(CurrentSubject.Id);
 
-                    TeachersCountText.Text = $"• Преподают {teachersCount} учителей\n" +
-                                            "• Используется в расписании занятий\n" +
-                                            "• По предмету выставляются оценки";
+                    TeachersCountText.Text = $"• Преподают {teachersCount} преподавателей\n" +
+                                            "• Используется в расписании пар\n" +
+                                            "• По дисциплине выставляются оценки";
                 }
                 catch (Exception ex)
                 {
@@ -104,7 +104,7 @@ namespace Diplom
         {
             if (string.IsNullOrWhiteSpace(CurrentSubject.Name))
             {
-                MessageBox.Show("Введите название предмета", "Ошибка",
+                MessageBox.Show("Введите название дисциплины", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 NameTextBox.Focus();
                 return false;
@@ -112,7 +112,7 @@ namespace Diplom
 
             if (CurrentSubject.Name.Length < 2)
             {
-                MessageBox.Show("Название предмета должно содержать минимум 2 символа", "Ошибка",
+                MessageBox.Show("Название дисциплины должно содержать минимум 2 символа", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 NameTextBox.Focus();
                 return false;
@@ -129,18 +129,18 @@ namespace Diplom
             {
                 if (CurrentSubject.Id > 0)
                 {
-                    // Обновление существующего предмета
+                    // Обновление существующей дисциплины
                     await SupabaseClient.UpdateSubject(CurrentSubject.Id, CurrentSubject.Name);
 
-                    MessageBox.Show("Предмет успешно обновлен", "Успех",
+                    MessageBox.Show("Дисциплина успешно обновлена", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    // Создание нового предмета
+                    // Создание новой дисциплины
                     await SupabaseClient.AddSubject(CurrentSubject.Name);
 
-                    MessageBox.Show("Предмет успешно создан", "Успех",
+                    MessageBox.Show("Дисциплина успешно создана", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 

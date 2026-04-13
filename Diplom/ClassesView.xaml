@@ -148,7 +148,6 @@
             </Setter>
         </Style>
 
-
         <!-- Стиль для DataGrid -->
         <Style TargetType="DataGrid">
             <Setter Property="Background" Value="White"/>
@@ -219,11 +218,11 @@
                 <!-- Заголовок и поиск -->
                 <Grid Grid.Row="0" Margin="0,0,0,20">
                     <StackPanel>
-                        <TextBlock Text="🏫 Управление классами" 
+                        <TextBlock Text="🏫 Управление группами" 
                                    FontSize="22" 
                                    FontWeight="SemiBold" 
                                    Foreground="#333"/>
-                        <TextBlock Text="Просмотр и редактирование списка классов" 
+                        <TextBlock Text="Просмотр и редактирование списка групп" 
                                    FontSize="13" 
                                    Foreground="#999"
                                    Margin="0,5,0,0"/>
@@ -235,14 +234,14 @@
                         <TextBox x:Name="SearchTextBox" 
                                  Style="{StaticResource SearchTextBox}" 
                                  Width="280" 
-                                 Tag="Поиск по названию, классному руководителю..." 
+                                 Tag="Поиск по названию, куратору..." 
                                  TextChanged="SearchTextBox_TextChanged"/>
                     </StackPanel>
                 </Grid>
 
                 <!-- Кнопки действий -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button Content="➕ Добавить класс" 
+                    <Button Content="➕ Добавить группу" 
                             Style="{StaticResource PrimaryButton}" 
                             Click="AddClass_Click"/>
                     <Button Content="✏️ Редактировать" 
@@ -265,7 +264,7 @@
                             Margin="20,0,0,0"
                             HorizontalAlignment="Right">
                         <TextBlock x:Name="CountText" 
-                                   Text="0 классов" 
+                                   Text="0 групп" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#5271FF"/>
@@ -274,7 +273,7 @@
             </Grid>
         </Border>
 
-        <!-- Таблица классов -->
+        <!-- Таблица групп -->
         <Border Grid.Row="1" 
                 Background="White" 
                 BorderBrush="#E0E0E0" 
@@ -298,15 +297,15 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Название класса" Width="*" Binding="{Binding Name}">
+                    <DataGridTextColumn Header="Название группы" Width="*" Binding="{Binding Name}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontWeight" Value="SemiBold"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Классный руководитель" Width="200" Binding="{Binding TeacherName}"/>
-                    <DataGridTextColumn Header="Кол-во учеников" Width="120" Binding="{Binding StudentsCount}">
+                    <DataGridTextColumn Header="Куратор" Width="200" Binding="{Binding TeacherName}"/>
+                    <DataGridTextColumn Header="Кол-во студентов" Width="120" Binding="{Binding StudentsCount}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>

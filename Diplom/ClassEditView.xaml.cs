@@ -39,7 +39,7 @@ namespace Diplom
 
             if (classItem != null)
             {
-                // Редактирование существующего класса
+                // Редактирование существующей группы
                 CurrentClass = new Class
                 {
                     Id = classItem.Id,
@@ -49,7 +49,7 @@ namespace Diplom
             }
             else
             {
-                // Создание нового класса
+                // Создание новой группы
                 CurrentClass = new Class();
             }
 
@@ -76,8 +76,8 @@ namespace Diplom
             }
         }
 
-        public string TitleText => CurrentClass?.Id > 0 ? "✏️ Редактирование класса" : "➕ Добавление класса";
-        public string SubtitleText => CurrentClass?.Id > 0 ? "Изменение информации о классе" : "Создание нового класса";
+        public string TitleText => CurrentClass?.Id > 0 ? "✏️ Редактирование группы" : "➕ Добавление группы";
+        public string SubtitleText => CurrentClass?.Id > 0 ? "Изменение информации о группе" : "Создание новой группы";
 
         private async System.Threading.Tasks.Task LoadTeachersAsync()
         {
@@ -104,7 +104,7 @@ namespace Diplom
 
                 TeacherComboBox.ItemsSource = Teachers;
 
-                // Устанавливаем выбранного учителя если есть
+                // Устанавливаем выбранного преподавателя если есть
                 if (CurrentClass.TeacherId.HasValue && CurrentClass.TeacherId > 0)
                 {
                     TeacherComboBox.SelectedValue = CurrentClass.TeacherId.Value;
@@ -116,7 +116,7 @@ namespace Diplom
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки учителей: {ex.Message}", "Ошибка",
+                MessageBox.Show($"Ошибка загрузки преподавателей: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -125,7 +125,7 @@ namespace Diplom
         {
             if (string.IsNullOrWhiteSpace(CurrentClass.Name))
             {
-                MessageBox.Show("Введите название класса", "Ошибка",
+                MessageBox.Show("Введите название группы", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 NameTextBox.Focus();
                 return false;
@@ -133,7 +133,7 @@ namespace Diplom
 
             if (CurrentClass.Name.Length < 2)
             {
-                MessageBox.Show("Название класса должно содержать минимум 2 символа", "Ошибка",
+                MessageBox.Show("Название группы должно содержать минимум 2 символа", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 NameTextBox.Focus();
                 return false;
@@ -150,25 +150,25 @@ namespace Diplom
             {
                 if (CurrentClass.Id > 0)
                 {
-                    // Обновление существующего класса
+                    // Обновление существующей группы
                     await SupabaseClient.UpdateClass(
                         CurrentClass.Id,
                         CurrentClass.Name,
                         CurrentClass.TeacherId == 0 ? null : CurrentClass.TeacherId
                     );
 
-                    MessageBox.Show("Класс успешно обновлен", "Успех",
+                    MessageBox.Show("Группа успешно обновлена", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    // Создание нового класса
+                    // Создание новой группы
                     await SupabaseClient.AddClass(
                         CurrentClass.Name,
                         CurrentClass.TeacherId == 0 ? null : CurrentClass.TeacherId
                     );
 
-                    MessageBox.Show("Класс успешно создан", "Успех",
+                    MessageBox.Show("Группа успешно создана", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 

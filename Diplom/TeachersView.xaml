@@ -276,7 +276,7 @@
             </Grid>
         </Border>
 
-        <!-- Таблица учителей -->
+        <!-- Таблица преподавателей -->
         <Border Grid.Row="1" 
                 Background="White" 
                 BorderBrush="#E0E0E0" 
@@ -290,10 +290,9 @@
                       SelectionMode="Single"
                       SelectionUnit="FullRow"
                       HeadersVisibility="Column"
-                      BorderThickness="0"  >
+                      BorderThickness="0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Номер" Width="75
-                                        " Binding="{Binding Id}">
+                    <DataGridTextColumn Header="Номер" Width="75" Binding="{Binding Id}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="#999"/>

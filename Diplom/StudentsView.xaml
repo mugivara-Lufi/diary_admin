@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Diplom"
              mc:Ignorable="d" 
-            d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
         <!-- Стиль для основной кнопки (синяя) -->
@@ -221,11 +221,11 @@
                 <!-- Заголовок и поиск -->
                 <Grid Grid.Row="0" Margin="0,0,0,20">
                     <StackPanel>
-                        <TextBlock Text="👥 Управление учениками" 
+                        <TextBlock Text="👥 Управление студентами" 
                                    FontSize="22" 
                                    FontWeight="SemiBold" 
                                    Foreground="#333"/>
-                        <TextBlock Text="Просмотр и редактирование списка учеников" 
+                        <TextBlock Text="Просмотр и редактирование списка студентов" 
                                    FontSize="13" 
                                    Foreground="#999"
                                    Margin="0,5,0,0"/>
@@ -237,14 +237,14 @@
                         <TextBox x:Name="SearchTextBox" 
                                  Style="{StaticResource SearchTextBox}" 
                                  Width="280" 
-                                 Tag="Поиск по имени, классу..." 
+                                 Tag="Поиск по имени, группе..." 
                                  TextChanged="SearchTextBox_TextChanged"/>
                     </StackPanel>
                 </Grid>
 
                 <!-- Кнопки действий -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button Content="➕ Добавить ученика" 
+                    <Button Content="➕ Добавить студента" 
                             Style="{StaticResource PrimaryButton}" 
                             Click="AddStudent_Click"/>
                     <Button Content="✏️ Редактировать" 
@@ -267,7 +267,7 @@
                             Margin="20,0,0,0"
                             HorizontalAlignment="Right">
                         <TextBlock x:Name="CountText" 
-                                   Text="0 учеников" 
+                                   Text="0 студентов" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#5271FF"/>
@@ -276,7 +276,7 @@
             </Grid>
         </Border>
 
-        <!-- Таблица учеников с отступами -->
+        <!-- Таблица студентов с отступами -->
         <Border Grid.Row="1" 
                 Background="White" 
                 BorderBrush="#E0E0E0" 
@@ -308,7 +308,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Дата рождения" Width="130" Binding="{Binding BirthDate, StringFormat=dd.MM.yyyy}"/>
-                    <DataGridTextColumn Header="Класс" Width="100" Binding="{Binding ClassName}">
+                    <DataGridTextColumn Header="Группа" Width="100" Binding="{Binding ClassName}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontWeight" Value="Medium"/>

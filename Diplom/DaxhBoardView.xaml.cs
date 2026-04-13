@@ -87,10 +87,10 @@ namespace Diplom
         {
             // Здесь можно добавить логику для расчета изменений
             // Пока используем заглушки
-            StudentsChangeText.Text = "Все ученики";
-            TeachersChangeText.Text = "Все учителя";
-            ClassesChangeText.Text = "Все классы";
-            SubjectsChangeText.Text = "Все предметы";
+            StudentsChangeText.Text = "Все студенты";
+            TeachersChangeText.Text = "Все преподаватели";
+            ClassesChangeText.Text = "Все группы";
+            SubjectsChangeText.Text = "Все дисциплины";
             GradesChangeText.Text = "за неделю";
             AttendanceChangeText.Text = "на сегодня";
             HomeworkChangeText.Text = "активных";

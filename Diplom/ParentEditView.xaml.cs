@@ -20,6 +20,16 @@ namespace Diplom
             {
                 Parent = parent;
                 LoadParentData();
+
+                // Меняем заголовок окна при редактировании
+                if (Application.Current.Windows.Count > 0)
+                {
+                    var owner = Application.Current.Windows[Application.Current.Windows.Count - 1];
+                    if (owner is Window window)
+                    {
+                        window.Title = "Редактирование законного представителя";
+                    }
+                }
             }
             else
             {
@@ -38,7 +48,7 @@ namespace Diplom
         {
             if (string.IsNullOrWhiteSpace(FullNameTextBox.Text))
             {
-                MessageBox.Show("Введите ФИО родителя", "Ошибка",
+                MessageBox.Show("Введите ФИО законного представителя", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 FullNameTextBox.Focus();
                 return false;
@@ -55,7 +65,7 @@ namespace Diplom
             {
                 if (Parent.Id == 0)
                 {
-                    // Создаем родителя с пользователем
+                    // Создаем законного представителя с пользователем
                     var (parentResult, userResult) = await SupabaseClient.AddParentWithUser(
                         FullNameTextBox.Text.Trim(),
                         PhoneTextBox.Text.Trim(),
@@ -72,11 +82,11 @@ namespace Diplom
                         string login = userResult[0]["login"].Value<string>();
 
                         MessageBox.Show(
-                            $"Родитель успешно добавлен!\n\n" +
+                            $"Законный представитель успешно добавлен!\n\n" +
                             $"Данные для входа:\n" +
                             $"Логин: {login}\n" +
                             $"Пароль: password123\n\n" +
-                            $"Сообщите эти данные родителю для входа в систему.",
+                            $"Сообщите эти данные представителю для входа в систему.",
                             "Успех",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information);
@@ -84,7 +94,7 @@ namespace Diplom
                 }
                 else
                 {
-                    // Обновляем существующего родителя
+                    // Обновляем существующего законного представителя
                     await SupabaseClient.UpdateParent(
                         Parent.Id,
                         FullNameTextBox.Text.Trim(),
@@ -95,6 +105,9 @@ namespace Diplom
                     Parent.FullName = FullNameTextBox.Text.Trim();
                     Parent.Phone = PhoneTextBox.Text.Trim();
                     Parent.Email = EmailTextBox.Text.Trim();
+
+                    MessageBox.Show("Данные законного представителя успешно обновлены", "Успех",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
                 ParentSaved?.Invoke(Parent);

@@ -339,41 +339,41 @@
                 <Grid Grid.Row="0" Margin="0,0,0,20">
                     <StackPanel>
                         <TextBlock Text="📅 Расписание занятий" 
-                                   FontSize="22" 
-                                   FontWeight="SemiBold" 
-                                   Foreground="#333"/>
-                        <TextBlock Text="Просмотр и редактирование расписания уроков" 
-                                   FontSize="13" 
-                                   Foreground="#999"
-                                   Margin="0,5,0,0"/>
+                                    FontSize="22" 
+                                    FontWeight="SemiBold" 
+                                    Foreground="#333"/>
+                        <TextBlock Text="Просмотр и редактирование расписания занятий" 
+                                    FontSize="13" 
+                                    Foreground="#999"
+                                    Margin="0,5,0,0"/>
                     </StackPanel>
 
                     <!-- Выбор класса -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock Text="Класс:" 
-                                   FontSize="13" 
-                                   Foreground="#666"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,10,0"/>
+                        <TextBlock Text="Группа:" 
+               FontSize="13" 
+               Foreground="#666"
+               VerticalAlignment="Center"
+               Margin="0,0,10,0"/>
                         <ComboBox x:Name="ClassComboBox" 
-                                  Width="150" 
-                                  Height="38"
-                                  Style="{StaticResource FormComboBox}"
-                                  SelectionChanged="ClassComboBox_SelectionChanged"
-                                  DisplayMemberPath="Name"
-                                  SelectedValuePath="Id" Margin="0,0,0,0"/>
+              Width="150" 
+              Height="38"
+              Style="{StaticResource FormComboBox}"
+              SelectionChanged="ClassComboBox_SelectionChanged"
+              DisplayMemberPath="Name"
+              SelectedValuePath="Id" Margin="0,0,0,0"/>
                     </StackPanel>
                 </Grid>
 
                 <!-- Кнопки управления -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button Content="➕ Добавить урок" 
-                            Style="{StaticResource PrimaryButton}"
-                            Click="AddLesson_Click"/>
+                    <Button Content="➕ Добавить занятие" 
+        Style="{StaticResource PrimaryButton}"
+        Click="AddLesson_Click"/>
                     <Button Content="✏️ Редактировать" 
-                            Style="{StaticResource SecondaryButton}"
-                            Click="EditLesson_Click"
-                            Margin="10,0,0,0"/>
+        Style="{StaticResource SecondaryButton}"
+        Click="EditLesson_Click"
+        Margin="10,0,0,0"/>
                     <Button Content="🗑️ Удалить" 
                             Style="{StaticResource SecondaryButton}"
                             Click="DeleteLesson_Click"
@@ -381,6 +381,10 @@
                     <Button Content="🔄 Обновить" 
                             Style="{StaticResource SecondaryButton}"
                             Click="Refresh_Click"
+                            Margin="10,0,0,0"/>
+                    <Button Content="📄 Экспорт в PDF" 
+                            Style="{StaticResource SecondaryButton}"
+                            Click="ExportToPdf_Click"
                             Margin="10,0,0,0"/>
 
                     <!-- Навигация по неделям -->
@@ -510,65 +514,59 @@
                     <Border Grid.Row="1" Grid.Column="0" Background="#F8F9FA" BorderBrush="#E0E0E0" BorderThickness="0,0,1,1">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="8:00" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
-                            <TextBlock Text="8:45" FontSize="10" Foreground="#999"/>
+                            <TextBlock Text="9:30" FontSize="10" Foreground="#999"/>
                         </StackPanel>
                     </Border>
 
                     <!-- 2 урок -->
                     <Border Grid.Row="2" Grid.Column="0" Background="#F8F9FA" BorderBrush="#E0E0E0" BorderThickness="0,0,1,1">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="8:55" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
-                            <TextBlock Text="9:40" FontSize="10" Foreground="#999"/>
+                            <TextBlock Text="9:40" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
+                            <TextBlock Text="11:10" FontSize="10" Foreground="#999"/>
                         </StackPanel>
                     </Border>
 
                     <!-- 3 урок -->
                     <Border Grid.Row="3" Grid.Column="0" Background="#F8F9FA" BorderBrush="#E0E0E0" BorderThickness="0,0,1,1">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="9:50" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
-                            <TextBlock Text="10:35" FontSize="10" Foreground="#999"/>
+                            <TextBlock Text="11:20" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
+                            <TextBlock Text="12:50" FontSize="10" Foreground="#999"/>
                         </StackPanel>
                     </Border>
 
                     <!-- 4 урок -->
                     <Border Grid.Row="4" Grid.Column="0" Background="#F8F9FA" BorderBrush="#E0E0E0" BorderThickness="0,0,1,1">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="10:45" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
-                            <TextBlock Text="11:30" FontSize="10" Foreground="#999"/>
+                            <TextBlock Text="13:45" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
+                            <TextBlock Text="15:15" FontSize="10" Foreground="#999"/>
                         </StackPanel>
                     </Border>
 
                     <!-- 5 урок -->
                     <Border Grid.Row="5" Grid.Column="0" Background="#F8F9FA" BorderBrush="#E0E0E0" BorderThickness="0,0,1,1">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="11:40" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
-                            <TextBlock Text="12:25" FontSize="10" Foreground="#999"/>
+                            <TextBlock Text="15:25" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
+                            <TextBlock Text="16:55" FontSize="10" Foreground="#999"/>
                         </StackPanel>
                     </Border>
 
                     <!-- 6 урок -->
                     <Border Grid.Row="6" Grid.Column="0" Background="#F8F9FA" BorderBrush="#E0E0E0" BorderThickness="0,0,1,1">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="12:35" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
-                            <TextBlock Text="13:20" FontSize="10" Foreground="#999"/>
+                            <TextBlock Text="17:05" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
+                            <TextBlock Text="18:35" FontSize="10" Foreground="#999"/>
                         </StackPanel>
                     </Border>
 
                     <!-- 7 урок -->
                     <Border Grid.Row="7" Grid.Column="0" Background="#F8F9FA" BorderBrush="#E0E0E0" BorderThickness="0,0,1,1">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="13:30" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
-                            <TextBlock Text="14:15" FontSize="10" Foreground="#999"/>
+                            <TextBlock Text="18:45" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
+                            <TextBlock Text="20:15" FontSize="10" Foreground="#999"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- 8 урок -->
-                    <Border Grid.Row="8" Grid.Column="0" Background="#F8F9FA" BorderBrush="#E0E0E0" BorderThickness="0,0,1,1">
-                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Text="14:25" FontSize="12" FontWeight="SemiBold" Foreground="#333"/>
-                            <TextBlock Text="15:10" FontSize="10" Foreground="#999"/>
-                        </StackPanel>
-                    </Border>
+
 
                     <!-- Пустые ячейки сетки (1–8 урок, Пн–Сб) -->
                     <!-- 1 урок -->
@@ -627,13 +625,6 @@
                     <Border Grid.Row="7" Grid.Column="5" Style="{StaticResource ScheduleCellStyle}" />
                     <Border Grid.Row="7" Grid.Column="6" Style="{StaticResource ScheduleCellStyle}" />
 
-                    <!-- 8 урок -->
-                    <Border Grid.Row="8" Grid.Column="1" Style="{StaticResource ScheduleCellStyle}" />
-                    <Border Grid.Row="8" Grid.Column="2" Style="{StaticResource ScheduleCellStyle}" />
-                    <Border Grid.Row="8" Grid.Column="3" Style="{StaticResource ScheduleCellStyle}" />
-                    <Border Grid.Row="8" Grid.Column="4" Style="{StaticResource ScheduleCellStyle}" />
-                    <Border Grid.Row="8" Grid.Column="5" Style="{StaticResource ScheduleCellStyle}" />
-                    <Border Grid.Row="8" Grid.Column="6" Style="{StaticResource ScheduleCellStyle}" />
 
                 </Grid>
             </ScrollViewer>

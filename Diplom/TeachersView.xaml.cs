@@ -57,7 +57,7 @@ namespace Diplom
                         FullName = item["full_name"]?.ToString() ?? "Не указано",
                         SubjectId = item["subject_id"]?.ToObject<int?>(),
                         Email = item["email"]?.ToString() ?? "Не указано",
-                        SubjectName = item["subjects"]?["name"]?.ToString() ?? "Не назначен"
+                        SubjectName = item["subjects"]?["name"]?.ToString() ?? "Не назначена"
                     };
 
                     _allTeachers.Add(teacher);
@@ -133,7 +133,7 @@ namespace Diplom
                     await SupabaseClient.DeleteTeacher(selectedTeacher.Id);
                     await LoadTeachersAsync();
 
-                    MessageBox.Show("Учитель успешно удален", "Успех",
+                    MessageBox.Show("Преподаватель успешно удален", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
@@ -155,7 +155,7 @@ namespace Diplom
 
             if (string.IsNullOrEmpty(searchText))
             {
-                // Показываем всех учителей если поиск пустой
+                // Показываем всех преподавателей если поиск пустой
                 _teachers.Clear();
                 foreach (var teacher in _allTeachers)
                 {
@@ -164,7 +164,7 @@ namespace Diplom
             }
             else
             {
-                // Фильтруем по ФИО, предмету и email
+                // Фильтруем по ФИО, дисциплине и email
                 var filteredTeachers = _allTeachers
                     .Where(t => t.FullName.ToLower().Contains(searchText) ||
                                (t.SubjectName?.ToLower().Contains(searchText) ?? false) ||
@@ -269,7 +269,5 @@ namespace Diplom
         {
             LastUpdateText.Text = GetTimeAgo(_lastUpdate);
         }
-
-
     }
 }

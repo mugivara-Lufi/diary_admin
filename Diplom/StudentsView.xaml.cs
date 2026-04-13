@@ -59,7 +59,7 @@ namespace Diplom
                         BirthDate = item["birth_date"]?.ToObject<DateTime?>(),
                         ClassId = item["class_id"]?.ToObject<int?>(),
                         Contact = item["contact"]?.ToString() ?? "Не указано",
-                        ClassName = item["classes"]?["name"]?.ToString() ?? "Не назначен"
+                        ClassName = item["classes"]?["name"]?.ToString() ?? "Не назначена"
                     };
 
                     _allStudents.Add(student);
@@ -71,7 +71,7 @@ namespace Diplom
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки учеников: {ex.Message}", "Ошибка",
+                MessageBox.Show($"Ошибка загрузки студентов: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 StatusText.Text = "Ошибка загрузки";
             }
@@ -83,7 +83,7 @@ namespace Diplom
 
         private void UpdateStatus()
         {
-            CountText.Text = $"{_students.Count} учеников";
+            CountText.Text = $"{_students.Count} студентов";
             StatusText.Text = "Готово";
         }
 
@@ -103,7 +103,7 @@ namespace Diplom
             var selectedStudent = StudentsGrid.SelectedItem as Student;
             if (selectedStudent == null)
             {
-                MessageBox.Show("Выберите ученика для редактирования", "Информация",
+                MessageBox.Show("Выберите студента для редактирования", "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -116,13 +116,13 @@ namespace Diplom
             var selectedStudent = StudentsGrid.SelectedItem as Student;
             if (selectedStudent == null)
             {
-                MessageBox.Show("Выберите ученика для удаления", "Информация",
+                MessageBox.Show("Выберите студента для удаления", "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
             var result = MessageBox.Show(
-                $"Вы уверены, что хотите удалить ученика \"{selectedStudent.FullName}\"?\n\nЭто действие нельзя отменить.",
+                $"Вы уверены, что хотите удалить студента \"{selectedStudent.FullName}\"?\n\nЭто действие нельзя отменить.",
                 "Подтверждение удаления",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -135,7 +135,7 @@ namespace Diplom
                     await SupabaseClient.DeleteStudent(selectedStudent.Id);
                     await LoadStudentsAsync();
 
-                    MessageBox.Show("Ученик успешно удален", "Успех",
+                    MessageBox.Show("Студент успешно удален", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
@@ -157,7 +157,7 @@ namespace Diplom
 
             if (string.IsNullOrEmpty(searchText))
             {
-                // Показываем всех учеников если поиск пустой
+                // Показываем всех студентов если поиск пустой
                 _students.Clear();
                 foreach (var student in _allStudents)
                 {
@@ -166,7 +166,7 @@ namespace Diplom
             }
             else
             {
-                // Фильтруем по ФИО и классу
+                // Фильтруем по ФИО и группе
                 var filteredStudents = _allStudents
                     .Where(s => s.FullName.ToLower().Contains(searchText) ||
                                (s.ClassName?.ToLower().Contains(searchText) ?? false) ||

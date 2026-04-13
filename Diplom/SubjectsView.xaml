@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Diplom"
              mc:Ignorable="d" 
-d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <!-- Используем те же стили что в ClassesView -->
+        <!-- Используем те же стили что в GroupsView -->
         <Style x:Key="PrimaryButton" TargetType="Button">
             <Setter Property="Height" Value="38"/>
             <Setter Property="Padding" Value="20,0"/>
@@ -148,7 +148,6 @@ d:DesignHeight="450" d:DesignWidth="800">
             </Setter>
         </Style>
 
-
         <!-- Стиль для DataGrid -->
         <Style TargetType="DataGrid">
             <Setter Property="Background" Value="White"/>
@@ -219,11 +218,11 @@ d:DesignHeight="450" d:DesignWidth="800">
                 <!-- Заголовок и поиск -->
                 <Grid Grid.Row="0" Margin="0,0,0,20">
                     <StackPanel>
-                        <TextBlock Text="📚 Управление предметами" 
+                        <TextBlock Text="📚 Управление дисциплинами" 
                                    FontSize="22" 
                                    FontWeight="SemiBold" 
                                    Foreground="#333"/>
-                        <TextBlock Text="Просмотр и редактирование списка учебных предметов" 
+                        <TextBlock Text="Просмотр и редактирование списка учебных дисциплин" 
                                    FontSize="13" 
                                    Foreground="#999"
                                    Margin="0,5,0,0"/>
@@ -235,14 +234,14 @@ d:DesignHeight="450" d:DesignWidth="800">
                         <TextBox x:Name="SearchTextBox" 
                                  Style="{StaticResource SearchTextBox}" 
                                  Width="280" 
-                                 Tag="Поиск по названию предмета..." 
+                                 Tag="Поиск по названию дисциплины..." 
                                  TextChanged="SearchTextBox_TextChanged"/>
                     </StackPanel>
                 </Grid>
 
                 <!-- Кнопки действий -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button Content="➕ Добавить предмет" 
+                    <Button Content="➕ Добавить дисциплину" 
                             Style="{StaticResource PrimaryButton}" 
                             Click="AddSubject_Click"/>
                     <Button Content="✏️ Редактировать" 
@@ -265,7 +264,7 @@ d:DesignHeight="450" d:DesignWidth="800">
                             Margin="20,0,0,0"
                             HorizontalAlignment="Right">
                         <TextBlock x:Name="CountText" 
-                                   Text="0 предметов" 
+                                   Text="0 дисциплин" 
                                    FontSize="13" 
                                    FontWeight="SemiBold"
                                    Foreground="#5271FF"/>
@@ -274,7 +273,7 @@ d:DesignHeight="450" d:DesignWidth="800">
             </Grid>
         </Border>
 
-        <!-- Таблица предметов -->
+        <!-- Таблица дисциплин -->
         <Border Grid.Row="1" 
                 Background="White" 
                 BorderBrush="#E0E0E0" 
@@ -298,14 +297,14 @@ d:DesignHeight="450" d:DesignWidth="800">
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Название предмета" Width="*" Binding="{Binding Name}">
+                    <DataGridTextColumn Header="Название дисциплины" Width="*" Binding="{Binding Name}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontWeight" Value="SemiBold"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Кол-во учителей" Width="120" Binding="{Binding TeachersCount}">
+                    <DataGridTextColumn Header="Кол-во преподавателей" Width="120" Binding="{Binding TeachersCount}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>

@@ -29,6 +29,7 @@ namespace Diplom
 
             Loaded += async (s, e) => await LoadClassesAsync();
         }
+
         private async System.Threading.Tasks.Task LoadClassesAsync()
         {
             try
@@ -38,7 +39,7 @@ namespace Diplom
 
                 var result = await SupabaseClient.GetClassesWithTeachers();
 
-                // Используем альтернативный метод
+                // Используем альтернативный метод для подсчета студентов
                 var countsDict = await SupabaseClient.GetStudentsCountByClassAlternative();
 
                 _allClasses.Clear();
@@ -66,7 +67,7 @@ namespace Diplom
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки классов: {ex.Message}", "Ошибка",
+                MessageBox.Show($"Ошибка загрузки групп: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 StatusText.Text = "Ошибка загрузки";
             }
@@ -76,10 +77,9 @@ namespace Diplom
             }
         }
 
-
         private void UpdateStatus()
         {
-            CountText.Text = $"{_classes.Count} классов";
+            CountText.Text = $"{_classes.Count} групп";
             StatusText.Text = "Готово";
         }
 
@@ -99,7 +99,7 @@ namespace Diplom
             var selectedClass = ClassesGrid.SelectedItem as Class;
             if (selectedClass == null)
             {
-                MessageBox.Show("Выберите класс для редактирования", "Информация",
+                MessageBox.Show("Выберите группу для редактирования", "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -112,13 +112,13 @@ namespace Diplom
             var selectedClass = ClassesGrid.SelectedItem as Class;
             if (selectedClass == null)
             {
-                MessageBox.Show("Выберите класс для удаления", "Информация",
+                MessageBox.Show("Выберите группу для удаления", "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
             var result = MessageBox.Show(
-                $"Вы уверены, что хотите удалить класс \"{selectedClass.Name}\"?\n\nЭто действие нельзя отменить.",
+                $"Вы уверены, что хотите удалить группу \"{selectedClass.Name}\"?\n\nЭто действие нельзя отменить.",
                 "Подтверждение удаления",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -131,7 +131,7 @@ namespace Diplom
                     await SupabaseClient.DeleteClass(selectedClass.Id);
                     await LoadClassesAsync();
 
-                    MessageBox.Show("Класс успешно удален", "Успех",
+                    MessageBox.Show("Группа успешно удалена", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)

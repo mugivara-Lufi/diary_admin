@@ -110,49 +110,45 @@ namespace Diplom
         private void ShowStudents()
         {
             MainContent.Content = new StudentsView();
-            ContentTitleText.Text = "Управление учениками";
-            ContentSubtitleText.Text = "Добавление, редактирование и удаление учеников";
+            ContentTitleText.Text = "Управление студентами";
+            ContentSubtitleText.Text = "Добавление, редактирование и удаление студентов";
             UpdateNavigationStyle("Students");
         }
 
         private void ShowTeachers()
         {
             MainContent.Content = new TeachersView();
-            ContentTitleText.Text = "Управление учителями";
-            ContentSubtitleText.Text = "Добавление, редактирование и удаление учителей";
+            ContentTitleText.Text = "Управление преподавателями";
+            ContentSubtitleText.Text = "Добавление, редактирование и удаление преподавателей";
             UpdateNavigationStyle("Teachers");
         }
 
         private void ShowClasses()
         {
-            // Заглушка для классов
             MainContent.Content = new ClassesView();
-            ContentTitleText.Text = "Управление классами";
-            ContentSubtitleText.Text = "Добавление, редактирование и удаление классов";
+            ContentTitleText.Text = "Управление группами";
+            ContentSubtitleText.Text = "Добавление, редактирование и удаление групп";
             UpdateNavigationStyle("Classes");
         }
 
         private void ShowSubjects()
         {
-            // Заглушка для предметов
             MainContent.Content = new SubjectsView();
-            ContentTitleText.Text = "Управление предметами";
-            ContentSubtitleText.Text = "Добавление, редактирование и удаление предметов";
+            ContentTitleText.Text = "Управление дисциплинами";
+            ContentSubtitleText.Text = "Добавление, редактирование и удаление дисциплин";
             UpdateNavigationStyle("Subjects");
         }
 
         private void ShowSchedule()
         {
-            // Заглушка для расписания
             MainContent.Content = new ScheduleView();
             ContentTitleText.Text = "Управление расписанием";
-            ContentSubtitleText.Text = "Составление и редактирование расписания";
+            ContentSubtitleText.Text = "Составление и редактирование расписания занятий";
             UpdateNavigationStyle("Schedule");
         }
 
         private void ShowReports()
         {
-            // Заглушка для расписания
             MainContent.Content = new ReportsView();
             ContentTitleText.Text = "Управление отчетами";
             ContentSubtitleText.Text = "Составление и редактирование отчетов";
@@ -239,5 +235,4 @@ namespace Diplom
             }
         }
     }
-
 }

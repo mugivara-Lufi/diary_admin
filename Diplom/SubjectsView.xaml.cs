@@ -46,7 +46,7 @@ namespace Diplom
 
                 var result = await SupabaseClient.GetAllSubjects();
 
-                // Используем альтернативный метод для подсчета учителей
+                // Используем альтернативный метод для подсчета преподавателей
                 var countsDict = await SupabaseClient.GetTeachersCountBySubjectAlternative();
 
                 _allSubjects.Clear();
@@ -72,7 +72,7 @@ namespace Diplom
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки предметов: {ex.Message}", "Ошибка",
+                MessageBox.Show($"Ошибка загрузки дисциплин: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 StatusText.Text = "Ошибка загрузки";
             }
@@ -97,7 +97,7 @@ namespace Diplom
 
         private void UpdateStatus()
         {
-            CountText.Text = $"{_subjects.Count} предметов";
+            CountText.Text = $"{_subjects.Count} дисциплин";
             StatusText.Text = "Готово";
         }
 
@@ -117,7 +117,7 @@ namespace Diplom
             var selectedSubject = SubjectsGrid.SelectedItem as Subject;
             if (selectedSubject == null)
             {
-                MessageBox.Show("Выберите предмет для редактирования", "Информация",
+                MessageBox.Show("Выберите дисциплину для редактирования", "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -130,13 +130,13 @@ namespace Diplom
             var selectedSubject = SubjectsGrid.SelectedItem as Subject;
             if (selectedSubject == null)
             {
-                MessageBox.Show("Выберите предмет для удаления", "Информация",
+                MessageBox.Show("Выберите дисциплину для удаления", "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
             var result = MessageBox.Show(
-                $"Вы уверены, что хотите удалить предмет \"{selectedSubject.Name}\"?\n\nЭто действие нельзя отменить.",
+                $"Вы уверены, что хотите удалить дисциплину \"{selectedSubject.Name}\"?\n\nЭто действие нельзя отменить.",
                 "Подтверждение удаления",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -149,7 +149,7 @@ namespace Diplom
                     await SupabaseClient.DeleteSubject(selectedSubject.Id);
                     await LoadSubjectsAsync();
 
-                    MessageBox.Show("Предмет успешно удален", "Успех",
+                    MessageBox.Show("Дисциплина успешно удалена", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)

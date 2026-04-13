@@ -107,35 +107,37 @@
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="10,0,10,0">
                         <TextBlock Text="ОСНОВНОЕ" 
-                   FontSize="11" 
-                   Foreground="#999" 
-                   Margin="15,0,0,8"
-                   FontWeight="SemiBold"/>
+                                   FontSize="11" 
+                                   Foreground="#999" 
+                                   Margin="15,0,0,8"
+                                   FontWeight="SemiBold"/>
 
                         <Button x:Name="DashboardButton" Content="📊 Дашборд" Style="{StaticResource NavButtonActiveStyle}"
-                Click="DashboardButton_Click"/>
-                        <!--<Button Content="📈 Статистика" Style="{StaticResource NavButtonStyle}"/>-->
+                                Click="DashboardButton_Click"/>
 
                         <TextBlock Text="УПРАВЛЕНИЕ" 
-                   FontSize="11" 
-                   Foreground="#999" 
-                   Margin="15,20,0,8"
-                   FontWeight="SemiBold"/>
+                                   FontSize="11" 
+                                   Foreground="#999" 
+                                   Margin="15,20,0,8"
+                                   FontWeight="SemiBold"/>
 
-                        <Button x:Name="StudentsButton" Content="👥 Ученики" Style="{StaticResource NavButtonStyle}"
-                Click="StudentsButton_Click"/>
-                        <Button x:Name="TeachersButton" Content="👨‍🏫 Учителя" Style="{StaticResource NavButtonStyle}" Click="TeachersButton_Click"/>
-                        <Button x:Name="ClassesButton" Content="🏫 Классы" Style="{StaticResource NavButtonStyle}" Click="ClassesButton_Click"/>
-                        <Button x:Name="SubjectsButton" Content="📚 Предметы" Style="{StaticResource NavButtonStyle}" Click="SubjectsButton_Click"/>
-                        <Button x:Name="ScheduleButton" Content="📅 Расписание" Style="{StaticResource NavButtonStyle}" Click="ScheduleButton_Click"/>
+                        <Button x:Name="StudentsButton" Content="👥 Студенты" Style="{StaticResource NavButtonStyle}"
+                                Click="StudentsButton_Click"/>
+                        <Button x:Name="TeachersButton" Content="👨‍🏫 Преподаватели" Style="{StaticResource NavButtonStyle}" 
+                                Click="TeachersButton_Click"/>
+                        <Button x:Name="ClassesButton" Content="🏫 Группы" Style="{StaticResource NavButtonStyle}" 
+                                Click="ClassesButton_Click"/>
+                        <Button x:Name="SubjectsButton" Content="📚 Дисциплины" Style="{StaticResource NavButtonStyle}" 
+                                Click="SubjectsButton_Click"/>
+                        <Button x:Name="ScheduleButton" Content="📅 Расписание" Style="{StaticResource NavButtonStyle}" 
+                                Click="ScheduleButton_Click"/>
 
                         <TextBlock Text="ДРУГОЕ" 
-                   FontSize="11" 
-                   Foreground="#999" 
-                   Margin="15,20,0,8"
-                   FontWeight="SemiBold"/>
+                                   FontSize="11" 
+                                   Foreground="#999" 
+                                   Margin="15,20,0,8"
+                                   FontWeight="SemiBold"/>
 
-                        <!--<Button Content="⚙️ Настройки" Style="{StaticResource NavButtonStyle}"/>-->
                         <Button Content="📋 Отчеты" Style="{StaticResource NavButtonStyle}" Click="ReportsButton_Click"/>
                     </StackPanel>
                 </ScrollViewer>
@@ -191,54 +193,24 @@
                 <Grid>
                     <StackPanel>
                         <TextBlock x:Name="ContentTitleText" 
-                           Text="Дашборд" 
-                           FontSize="24" 
-                           FontWeight="SemiBold" 
-                           Foreground="#333"/>
+                                   Text="Дашборд" 
+                                   FontSize="24" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#333"/>
                         <TextBlock x:Name="ContentSubtitleText" 
-                           Text="Обзор системы электронного дневника" 
-                           FontSize="13" 
-                           Foreground="#999"
-                           Margin="0,5,0,0"/>
+                                   Text="Обзор системы электронного дневника" 
+                                   FontSize="13" 
+                                   Foreground="#999"
+                                   Margin="0,5,0,0"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Border Background="#F5F7FF" Padding="12,8" CornerRadius="6" Margin="0,0,10,0">
                             <TextBlock x:Name="CurrentDateText" 
-                               Text="23 ноября 2025" 
-                               FontSize="13" 
-                               Foreground="#5271FF" Height="19"/>
+                                       Text="23 ноября 2025" 
+                                       FontSize="13" 
+                                       Foreground="#5271FF" Height="19"/>
                         </Border>
-                        <!--<Button Content="🔔" 
-                        Width="40" Height="40" 
-                        Background="#F8F9FA"
-                        BorderBrush="#E0E0E0"
-                        BorderThickness="1"
-                        FontSize="16"
-                        Cursor="Hand">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="6">
-                                                    <ContentPresenter HorizontalAlignment="Center" 
-                                                              VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#F5F7FF"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>-->
                     </StackPanel>
                 </Grid>
             </Border>
@@ -247,5 +219,4 @@
             <ContentControl x:Name="MainContent" Grid.Row="1"/>
         </Grid>
     </Grid>
-
 </Window>

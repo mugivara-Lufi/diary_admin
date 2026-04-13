@@ -17,7 +17,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-
 namespace Diplom
 {
     /// <summary>
@@ -63,8 +62,8 @@ namespace Diplom
                 var result = await SupabaseClient.ExecuteQuery("subjects", "select=*&order=name");
                 Subjects.Clear();
 
-                // Добавляем вариант "Не назначен"
-                Subjects.Add(new Subject { Id = 0, Name = "Не назначен" });
+                // Добавляем вариант "Не назначена"
+                Subjects.Add(new Subject { Id = 0, Name = "Не назначена" });
 
                 foreach (var item in result)
                 {
@@ -89,17 +88,15 @@ namespace Diplom
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки предметов: {ex.Message}");
+                MessageBox.Show($"Ошибка загрузки дисциплин: {ex.Message}");
             }
         }
 
         private void UpdateTitle()
         {
-            TitleText.Text = Teacher.Id > 0 ? "Редактирование учителя" : "Добавление учителя";
+            TitleText.Text = Teacher.Id > 0 ? "Редактирование преподавателя" : "Добавление преподавателя";
             SaveButton.Content = Teacher.Id > 0 ? "Обновить" : "Создать";
         }
-
-
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
@@ -110,13 +107,13 @@ namespace Diplom
                 SaveButton.IsEnabled = false;
                 SaveButton.Content = "Сохранение...";
 
-                // Если выбран "Не назначен", устанавливаем null
+                // Если выбрана "Не назначена", устанавливаем null
                 int? subjectId = Teacher.SubjectId > 0 ? Teacher.SubjectId : null;
 
-                // Для нового учителя предмет обязателен
+                // Для нового преподавателя дисциплина обязательна
                 if (Teacher.Id == 0 && subjectId == null)
                 {
-                    ShowValidationError("Для нового учителя необходимо выбрать предмет");
+                    ShowValidationError("Для нового преподавателя необходимо выбрать дисциплину");
                     return;
                 }
 
@@ -145,7 +142,7 @@ namespace Diplom
                 }
 
                 SaveCompleted?.Invoke(true);
-                MessageBox.Show(Teacher.Id > 0 ? "Учитель успешно обновлен" : "Учитель успешно добавлен",
+                MessageBox.Show(Teacher.Id > 0 ? "Преподаватель успешно обновлен" : "Преподаватель успешно добавлен",
                     "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -170,8 +167,6 @@ namespace Diplom
         {
             GoBack?.Invoke();
         }
-
-
 
         private const int MAX_FULLNAME_LENGTH = 100;
         private const int MAX_EMAIL_LENGTH = 100;
@@ -310,7 +305,7 @@ namespace Diplom
         {
             if (!IsValidFullName(Teacher.FullName))
             {
-                ShowValidationError("Введите корректное ФИО учителя (фамилия и имя через пробел, только буквы, пробелы, дефисы и апострофы)");
+                ShowValidationError("Введите корректное ФИО преподавателя (фамилия и имя через пробел, только буквы, пробелы, дефисы и апострофы)");
                 FullNameTextBox.Focus();
                 return false;
             }
@@ -322,17 +317,15 @@ namespace Diplom
                 return false;
             }
 
-            // Проверяем, что выбран предмет (если для нового учителя обязателен)
+            // Проверяем, что выбрана дисциплина (если для нового преподавателя обязательна)
             if (Teacher.Id == 0 && (Teacher.SubjectId == 0 || Teacher.SubjectId == null))
             {
-                ShowValidationError("Выберите предмет для нового учителя");
+                ShowValidationError("Выберите дисциплину для нового преподавателя");
                 SubjectComboBox.Focus();
                 return false;
             }
 
             return true;
         }
-
-
     }
 }
