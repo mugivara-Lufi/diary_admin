@@ -1,4 +1,5 @@
 ﻿using Diplom.Models;
+using Diplom.Services;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Diplom
 {
@@ -563,7 +565,6 @@ namespace Diplom
             }
             return null;
         }
-
         private async void ExportToPdf_Click(object sender, RoutedEventArgs e)
         {
             if (_classes.Count == 0)
@@ -573,84 +574,194 @@ namespace Diplom
                 return;
             }
 
+            // Современная цветовая палитра
+            var windowBgBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#F3F4F6"); // Мягкий светло-серый фон
+            var cardBgBrush = Brushes.White;
+            var textDarkBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#111827"); // Почти черный
+            var textMutedBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#4B5563"); // Приглушенный серый
+            var borderBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#E5E7EB"); // Светло-серая рамка
+
             var dialog = new Window
             {
                 Title = "Экспорт расписания",
-                Width = 400,
-                Height = 300,
+                Width = 420,
+                Height = 580,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Owner = Window.GetWindow(this),
                 ResizeMode = ResizeMode.NoResize,
-                ShowInTaskbar = false
+                ShowInTaskbar = false,
+                Background = windowBgBrush,
+                FontFamily = new FontFamily("Segoe UI, Arial, sans-serif"),
+                WindowStyle = WindowStyle.None
             };
 
-            var mainPanel = new StackPanel { Margin = new Thickness(20) };
+            // Главная белая карточка со скругленными углами
+            var cardBorder = new Border
+            {
+                Background = cardBgBrush,
+                CornerRadius = new CornerRadius(12),
+                Margin = new Thickness(16),
+                Padding = new Thickness(24),
+                BorderBrush = borderBrush,
+                BorderThickness = new Thickness(1)
+            };
+
+            // Добавляем легкую тень для карточки
+            cardBorder.Effect = new System.Windows.Media.Effects.DropShadowEffect
+            {
+                Color = Colors.Black,
+                Direction = 270,
+                ShadowDepth = 2,
+                Opacity = 0.05,
+                BlurRadius = 10
+            };
+
+            var mainPanel = new StackPanel();
 
             var titleText = new TextBlock
             {
-                Text = "Выберите месяц для экспорта",
-                FontSize = 16,
-                FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(0, 0, 0, 15)
+                Text = "Экспорт расписания",
+                FontSize = 20,
+                FontWeight = FontWeights.Bold,
+                Foreground = textDarkBrush,
+                Margin = new Thickness(0, 0, 0, 20),
+                HorizontalAlignment = HorizontalAlignment.Left
             };
             mainPanel.Children.Add(titleText);
 
-            var monthPicker = new DatePicker
+            // Выбор месяца
+            var monthLabel = new TextBlock
             {
-                DisplayDateStart = new DateTime(DateTime.Now.Year, 1, 1),
-                DisplayDateEnd = new DateTime(DateTime.Now.Year, 12, 31),
-                SelectedDate = DateTime.Now,
-                Margin = new Thickness(0, 0, 0, 20),
-                Height = 35
+                Text = "Выберите месяц",
+                FontSize = 13,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = textMutedBrush,
+                Margin = new Thickness(0, 0, 0, 8)
             };
-            mainPanel.Children.Add(monthPicker);
+            mainPanel.Children.Add(monthLabel);
+
+            var monthComboBox = new ComboBox
+            {
+                Height = 38,
+                Margin = new Thickness(0, 0, 0, 20),
+                DisplayMemberPath = "Key",
+                BorderBrush = borderBrush,
+                BorderThickness = new Thickness(1),
+                FontSize = 14,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Padding = new Thickness(8, 0, 8, 0),
+                Style = (Style)FindResource("FormComboBox")
+            };
+
+            var months = new List<KeyValuePair<string, DateTime>>();
+            for (int i = 1; i <= 12; i++)
+            {
+                var date = new DateTime(DateTime.Now.Year, i, 1);
+                months.Add(new KeyValuePair<string, DateTime>(date.ToString("MMMM yyyy"), date));
+            }
+            monthComboBox.ItemsSource = months;
+            monthComboBox.SelectedIndex = DateTime.Now.Month - 1;
+            mainPanel.Children.Add(monthComboBox);
+
+            // Выбор групп
+            var groupsLabel = new TextBlock
+            {
+                Text = "Выберите группы для экспорта",
+                FontSize = 13,
+                FontWeight = FontWeights.SemiBold,
+                Foreground = textMutedBrush,
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+            mainPanel.Children.Add(groupsLabel);
+
+            var groupsListBox = new ListBox
+            {
+                Height = 160,
+                Margin = new Thickness(0, 0, 0, 24),
+                SelectionMode = SelectionMode.Multiple,
+                DisplayMemberPath = "Name",
+                BorderBrush = borderBrush,
+                BorderThickness = new Thickness(1),
+                FontSize = 14,
+                Padding = new Thickness(4),
+                Style = (Style)FindResource("FormListBox")
+            };
+
+            foreach (var classItem in _classes)
+            {
+                groupsListBox.Items.Add(classItem);
+            }
+
+            foreach (var item in groupsListBox.Items)
+            {
+                groupsListBox.SelectedItems.Add(item);
+            }
+            mainPanel.Children.Add(groupsListBox);
+
+            // Прогресс бар и статус (обернуты в отдельную панель, чтобы занимать фиксированное место)
+            var progressPanel = new StackPanel { Height = 50, Margin = new Thickness(0, 0, 0, 15) };
 
             var progressBar = new ProgressBar
             {
-                Height = 25,
-                Margin = new Thickness(0, 0, 0, 15),
-                Visibility = Visibility.Collapsed
+                Height = 6, // Тонкий современный прогресс-бар
+                Margin = new Thickness(0, 0, 0, 8),
+                Visibility = Visibility.Collapsed,
+                BorderThickness = new Thickness(0),
+                Background = borderBrush
             };
-            mainPanel.Children.Add(progressBar);
+            progressPanel.Children.Add(progressBar);
 
             var statusText = new TextBlock
             {
                 Text = "",
                 FontSize = 12,
-                Foreground = Brushes.Gray,
-                Margin = new Thickness(0, 0, 0, 15),
-                Visibility = Visibility.Collapsed
+                Foreground = textMutedBrush,
+                Visibility = Visibility.Collapsed,
+                TextWrapping = TextWrapping.Wrap,
+                TextAlignment = TextAlignment.Center
             };
-            mainPanel.Children.Add(statusText);
+            progressPanel.Children.Add(statusText);
+            mainPanel.Children.Add(progressPanel);
 
+            // Кнопки
             var buttonPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Right
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(0, 10, 0, 0)
             };
 
             var cancelButton = new Button
             {
                 Content = "Отмена",
-                Width = 80,
-                Height = 35,
-                Margin = new Thickness(0, 0, 10, 0),
-                Style = (Style)FindResource("SecondaryButton")
+                Width = 90,
+                Height = 38,
+                Margin = new Thickness(0, 0, 12, 0),
+                Style = (Style)FindResource("SecondaryButton"),
+                Cursor = Cursors.Hand
             };
             cancelButton.Click += (s, args) => dialog.Close();
 
             var exportButton = new Button
             {
                 Content = "Экспортировать",
-                Width = 120,
-                Height = 35,
-                Style = (Style)FindResource("PrimaryButton")
+                Width = 140,
+                Height = 38,
+                Style = (Style)FindResource("PrimaryButton"),
+                Cursor = Cursors.Hand
             };
             exportButton.Click += async (s, args) =>
             {
-                if (!monthPicker.SelectedDate.HasValue)
+                if (monthComboBox.SelectedItem == null)
                 {
                     MessageBox.Show("Выберите месяц", "Внимание",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (groupsListBox.SelectedItems.Count == 0)
+                {
+                    MessageBox.Show("Выберите хотя бы одну группу", "Внимание",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
@@ -664,12 +775,18 @@ namespace Diplom
 
                 try
                 {
-                    var selectedMonth = monthPicker.SelectedDate.Value;
+                    var selectedMonth = ((KeyValuePair<string, DateTime>)monthComboBox.SelectedItem).Value;
+                    var selectedClasses = groupsListBox.SelectedItems.Cast<Class>().ToList();
                     var schedulesByClass = new Dictionary<Class, List<Schedule>>();
 
-                    foreach (var classItem in _classes)
+                    int totalClasses = selectedClasses.Count;
+                    int currentClass = 0;
+
+                    foreach (var classItem in selectedClasses)
                     {
-                        statusText.Text = $"Загрузка расписания для группы {classItem.Name}...";
+                        currentClass++;
+                        statusText.Text = $"Загрузка расписания для группы {classItem.Name} ({currentClass}/{totalClasses})...";
+                        progressBar.Value = (currentClass * 50) / totalClasses;
 
                         var startDate = new DateTime(selectedMonth.Year, selectedMonth.Month, 1);
                         var endDate = startDate.AddMonths(1).AddDays(-1);
@@ -721,10 +838,11 @@ namespace Diplom
                     statusText.Text = "Генерация PDF отчета...";
                     progressBar.IsIndeterminate = false;
                     progressBar.Maximum = 100;
-                    progressBar.Value = 50;
+                    progressBar.Value = 70;
 
-                    // Здесь нужен метод генерации PDF (добавьте его или используйте существующий)
-                    // var pdfBytes = GenerateMonthlyScheduleReport(selectedMonth, schedulesByClass);
+                    var pdfBytes = ScheduleReportService.GenerateMonthlyScheduleReportBeautiful(
+                        selectedMonth,
+                        schedulesByClass);
 
                     progressBar.Value = 100;
                     statusText.Text = "Сохранение файла...";
@@ -738,7 +856,7 @@ namespace Diplom
 
                     if (saveDialog.ShowDialog() == true)
                     {
-                        // System.IO.File.WriteAllBytes(saveDialog.FileName, pdfBytes);
+                        System.IO.File.WriteAllBytes(saveDialog.FileName, pdfBytes);
                         MessageBox.Show($"PDF отчет успешно сохранен!\n\nФайл: {saveDialog.FileName}",
                             "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
@@ -747,8 +865,8 @@ namespace Diplom
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка экспорта: {ex.Message}", "Ошибка",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Ошибка экспорта: {ex.Message}\n\n{ex.StackTrace}",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 finally
                 {
@@ -761,7 +879,9 @@ namespace Diplom
             buttonPanel.Children.Add(exportButton);
             mainPanel.Children.Add(buttonPanel);
 
-            dialog.Content = mainPanel;
+            // Упаковываем панель в карточку, а карточку в окно
+            cardBorder.Child = mainPanel;
+            dialog.Content = cardBorder;
             dialog.ShowDialog();
         }
     }

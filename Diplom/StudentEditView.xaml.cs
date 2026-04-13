@@ -223,7 +223,8 @@ namespace Diplom
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Owner = Window.GetWindow(this),
                 ResizeMode = ResizeMode.NoResize,
-                ShowInTaskbar = false
+                ShowInTaskbar = false,
+                WindowStyle = WindowStyle.None
             };
 
             parentEditDialog.ParentSaved += async (newParent) =>
@@ -291,7 +292,8 @@ namespace Diplom
                     Owner = Window.GetWindow(this),
                     Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F7FA")), // Светло-серый фон
                     ResizeMode = ResizeMode.NoResize,
-                    ShowInTaskbar = false
+                    ShowInTaskbar = false,
+                    WindowStyle = WindowStyle.None
                 };
 
                 var mainPanel = new Grid { Margin = new Thickness(20) };
@@ -362,7 +364,7 @@ namespace Diplom
                 var cancelButton = new Button
                 {
                     Content = "Отмена",
-                    Width = 100,
+                    Width = 150,
                     Height = 35,
                     Margin = new Thickness(0, 0, 10, 0),
                     Style = (Style)FindResource("SecondaryButton") // Используем ваш стиль
@@ -372,7 +374,7 @@ namespace Diplom
                 var selectButton = new Button
                 {
                     Content = "Выбрать",
-                    Width = 100,
+                    Width = 150,
                     Height = 35,
                     Style = (Style)FindResource("PrimaryButton") // Используем ваш стиль
                 };
