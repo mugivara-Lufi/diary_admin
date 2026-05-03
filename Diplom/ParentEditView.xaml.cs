@@ -3,6 +3,8 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Diplom
 {
@@ -35,6 +37,9 @@ namespace Diplom
             {
                 Parent = new Parent();
             }
+
+            // Подписываемся на событие изменения текста для валидации
+            EmailTextBox.TextChanged += EmailTextBox_TextChanged;
         }
 
         private void LoadParentData()
@@ -44,6 +49,56 @@ namespace Diplom
             EmailTextBox.Text = Parent.Email;
         }
 
+        private void EmailTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string email = EmailTextBox.Text?.Trim();
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                EmailTextBox.BorderBrush = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(224, 224, 224));
+                return;
+            }
+
+            bool isValidEmail = IsValidEmail(email);
+
+            if (isValidEmail)
+            {
+                EmailTextBox.BorderBrush = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(76, 175, 80)); // Зеленый
+            }
+            else
+            {
+                EmailTextBox.BorderBrush = new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromRgb(229, 62, 62)); // Красный
+            }
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool IsValidPhone(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone))
+                return true; // Телефон не обязателен
+
+            string digits = new string(phone.Where(char.IsDigit).ToArray());
+            return digits.Length >= 10 && digits.Length <= 12;
+        }
+
         private bool ValidateForm()
         {
             if (string.IsNullOrWhiteSpace(FullNameTextBox.Text))
@@ -51,6 +106,24 @@ namespace Diplom
                 MessageBox.Show("Введите ФИО законного представителя", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 FullNameTextBox.Focus();
+                return false;
+            }
+
+            // Валидация email (если указан)
+            if (!string.IsNullOrWhiteSpace(EmailTextBox.Text) && !IsValidEmail(EmailTextBox.Text))
+            {
+                MessageBox.Show("Введите корректный email адрес", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                EmailTextBox.Focus();
+                return false;
+            }
+
+            // Валидация телефона (если указан)
+            if (!string.IsNullOrWhiteSpace(PhoneTextBox.Text) && !IsValidPhone(PhoneTextBox.Text))
+            {
+                MessageBox.Show("Введите корректный номер телефона", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                PhoneTextBox.Focus();
                 return false;
             }
 
@@ -65,11 +138,15 @@ namespace Diplom
             {
                 if (Parent.Id == 0)
                 {
-                    // Создаем законного представителя с пользователем
+                    // ✅ Генерируем случайный пароль
+                    string generatedPassword = GenerateRandomPassword();
+
+                    // ✅ Передаем пароль в метод
                     var (parentResult, userResult) = await SupabaseClient.AddParentWithUser(
                         FullNameTextBox.Text.Trim(),
                         PhoneTextBox.Text.Trim(),
-                        EmailTextBox.Text.Trim()
+                        EmailTextBox.Text.Trim(),
+                        generatedPassword  // Передаем сгенерированный пароль
                     );
 
                     if (parentResult != null && parentResult.Count > 0)
@@ -80,21 +157,60 @@ namespace Diplom
                         Parent.Email = parentResult[0]["email"]?.Value<string>();
 
                         string login = userResult[0]["login"].Value<string>();
+                        // generatedPassword уже содержит сгенерированный пароль
 
-                        MessageBox.Show(
-                            $"Законный представитель успешно добавлен!\n\n" +
-                            $"Данные для входа:\n" +
-                            $"Логин: {login}\n" +
-                            $"Пароль: password123\n\n" +
-                            $"Сообщите эти данные представителю для входа в систему.",
-                            "Успех",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
+                        // Отправляем данные на email, если он указан
+                        if (!string.IsNullOrEmpty(Parent.Email) && IsValidEmail(Parent.Email))
+                        {
+                            try
+                            {
+                                bool sent = await SupabaseClient.SendLoginCredentials(
+                                    Parent.Email,
+                                    login,
+                                    generatedPassword,  // Используем сгенерированный пароль
+                                    Parent.FullName,
+                                    "parent"
+                                );
+
+                                if (sent)
+                                {
+                                    MessageBox.Show(
+                                        $"Законный представитель успешно добавлен!\n\n" +
+                                        $"Данные для входа отправлены на email: {Parent.Email}\n\n" +
+                                        $"Логин: {login}\n" +
+                                        $"Пароль: {generatedPassword}\n\n" +
+                                        $"Если письмо не пришло, проверьте папку Спам.",
+                                        "Успех",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Information);
+                                }
+                                else
+                                {
+                                    ShowCredentialsDialog(login, generatedPassword);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(
+                                    $"Законный представитель успешно добавлен!\n\n" +
+                                    $"НО: Не удалось отправить письмо: {ex.Message}\n\n" +
+                                    $"Логин: {login}\n" +
+                                    $"Пароль: {generatedPassword}\n\n" +
+                                    $"Сообщите эти данные представителю вручную.",
+                                    "Внимание",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Warning);
+                            }
+                        }
+                        else
+                        {
+                            ShowCredentialsDialog(login, generatedPassword);
+                        }
                     }
                 }
                 else
                 {
-                    // Обновляем существующего законного представителя
+                    // Обновление не требует изменения пароля
                     await SupabaseClient.UpdateParent(
                         Parent.Id,
                         FullNameTextBox.Text.Trim(),
@@ -119,6 +235,33 @@ namespace Diplom
             }
         }
 
+        private void ShowCredentialsDialog(string login, string password)
+        {
+            // Копируем данные в буфер обмена
+            string credentials = $"Логин: {login}\nПароль: {password}";
+            System.Windows.Clipboard.SetText(credentials);
+
+            MessageBox.Show(
+                $"✅ Законный представитель успешно добавлен!\n\n" +
+                $"📋 ДАННЫЕ ДЛЯ ВХОДА:\n" +
+                $"   Логин: {login}\n" +
+                $"   Пароль: {password}\n\n" +
+                $"📝 Данные скопированы в буфер обмена!\n" +
+                $"Сообщите их представителю.\n\n" +
+                $"✉️ Email не указан или указан неверно.\n" +
+                $"Чтобы получать данные на почту, укажите корректный email.",
+                "Успех",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        private string GenerateRandomPassword(int length = 8)
+        {
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Canceled?.Invoke();

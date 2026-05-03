@@ -330,6 +330,7 @@ namespace Diplom
         public static class AuthService
         {
             public static JObject CurrentUser { get; set; }
+            public static Teacher CurrentTeacher { get; set; }
 
             public static async Task<JObject> LoginAsync(string login, string password)
             {
@@ -339,11 +340,17 @@ namespace Diplom
             public static void Logout()
             {
                 CurrentUser = null;
+                CurrentTeacher = null;
             }
 
             public static bool IsAdmin()
             {
                 return CurrentUser?["role"]?.ToString() == "admin";
+            }
+
+            public static bool IsTeacher()
+            {
+                return CurrentUser?["role"]?.ToString() == "teacher";
             }
         }
 
@@ -807,7 +814,7 @@ namespace Diplom
         /// Добавить оценку
         /// </summary>
         public static async Task<JArray> AddGrade(int studentId, int subjectId, int teacherId,
-            string grade, string type, string comment = null)
+            string grade, string type, string comment, DateTime date)
         {
             var data = new
             {
@@ -815,7 +822,7 @@ namespace Diplom
                 subject_id = subjectId,
                 teacher_id = teacherId,
                 grade = grade,
-                date = DateTime.Now.ToString("yyyy-MM-dd"),
+                date = date.ToString("yyyy-MM-dd"),
                 type = type,
                 comment = comment
             };
@@ -1054,5 +1061,22 @@ namespace Diplom
         }
 
         #endregion
+
+
+        public static async Task<bool> SendLoginCredentials(string contact, string login, string password, string fullName, string role)
+        {
+            var notificationService = new Services.NotificationService();
+            return await notificationService.SendLoginCredentials(contact, login, password, fullName, role);
+        }
+
+        public static bool IsValidEmail(string email)
+        {
+            return Services.NotificationService.IsValidEmail(email);
+        }
+
+        public static bool IsValidPhone(string phone)
+        {
+            return Services.NotificationService.IsValidPhone(phone);
+        }
     }
 }

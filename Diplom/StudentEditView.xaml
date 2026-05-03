@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Diplom"
-             mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="600">
+             mc:Ignorable="d" d:DesignWidth="600" Height="697">
 
     <UserControl.Resources>
         <!-- Стиль для меток полей -->
@@ -491,7 +490,7 @@
                         <TextBox x:Name="ContactTextBox" 
                                  Style="{StaticResource FormTextBox}"
                                  Tag="Телефон или email"
-                                 Text="{Binding Student.Contact, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                 Text="{Binding Student.Contact, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="ContactTextBox_TextChanged_1"/>
                         <TextBlock Text="Телефон или email для связи со студентом" 
                                    FontSize="12" 
                                    Foreground="#999"

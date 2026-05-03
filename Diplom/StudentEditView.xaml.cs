@@ -491,7 +491,6 @@ namespace Diplom
 
                 if (Student.Id > 0)
                 {
-                    // Обновление существующего студента
                     await SupabaseClient.UpdateStudent(
                         Student.Id,
                         Student.FullName,
@@ -499,53 +498,70 @@ namespace Diplom
                         Student.ClassId,
                         Student.Contact
                     );
+
+                    MessageBox.Show("Студент успешно обновлен", "Успех",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    // Добавление нового студента с созданием пользователя
+                    // Генерируем случайный пароль
+                    string generatedPassword = GenerateRandomPassword();
+
                     var (studentResult, userResult) = await SupabaseClient.AddStudentWithUser(
                         Student.FullName,
                         Student.BirthDate?.ToString("yyyy-MM-dd"),
                         Student.ClassId,
-                        Student.Contact
+                        Student.Contact,
+                        generatedPassword
                     );
 
                     if (studentResult != null && studentResult.Count > 0)
                     {
                         Student.Id = studentResult[0]["id"].Value<int>();
-
                         string login = userResult[0]["login"].Value<string>();
-                        MessageBox.Show(
-                            $"Студент успешно добавлен!\n\n" +
-                            $"Данные для входа:\n" +
-                            $"Логин: {login}\n" +
-                            $"Пароль: password123\n\n" +
-                            $"Сообщите эти данные студенту для входа в систему.",
-                            "Успех",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
+
+                        // Отправляем данные на контакт
+                        if (!string.IsNullOrEmpty(Student.Contact))
+                        {
+                            bool sent = await SupabaseClient.SendLoginCredentials(
+                                Student.Contact,
+                                login,
+                                generatedPassword,
+                                Student.FullName,
+                                "student"
+                            );
+
+                            if (sent)
+                            {
+                                string contactType = SupabaseClient.IsValidEmail(Student.Contact) ? "email" : "номер телефона";
+                                MessageBox.Show(
+                                    $"Студент успешно добавлен!\n\n" +
+                                    $"Данные для входа отправлены на {contactType}: {Student.Contact}\n\n" +
+                                    $"Логин: {login}\n" +
+                                    $"Пароль: {generatedPassword}",
+                                    "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show(
+                                $"Студент успешно добавлен!\n\n" +
+                                $"Данные для входа:\n" +
+                                $"Логин: {login}\n" +
+                                $"Пароль: {generatedPassword}\n\n" +
+                                $"Для автоматической отправки укажите контактные данные.",
+                                "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
                     }
                 }
 
                 // Сохраняем связи с родителями
-                if (Student.Id > 0)
+                if (Student.Id > 0 && Parents.Any())
                 {
-                    // Добавляем новых родителей
                     foreach (var parent in Parents)
                     {
-                        // Проверяем, есть ли уже связь
                         var existingRelations = await SupabaseClient.GetStudentParents(Student.Id);
-                        bool exists = false;
-
-                        foreach (var rel in existingRelations)
-                        {
-                            var parentData = rel["parents"];
-                            if (parentData["id"].Value<int>() == parent.Id)
-                            {
-                                exists = true;
-                                break;
-                            }
-                        }
+                        bool exists = existingRelations.Any(rel => rel["parents"]?["id"]?.Value<int>() == parent.Id);
 
                         if (!exists)
                         {
@@ -553,7 +569,6 @@ namespace Diplom
                         }
                     }
 
-                    // Удаляем удаленных родителей
                     foreach (var removedParent in _removedParents)
                     {
                         await SupabaseClient.DeleteStudentParent(Student.Id, removedParent.Id);
@@ -562,16 +577,7 @@ namespace Diplom
                 }
 
                 SaveCompleted?.Invoke(true);
-
-                if (Student.Id == 0)
-                {
-                    GoBack?.Invoke();
-                }
-                else
-                {
-                    MessageBox.Show("Студент успешно обновлен", "Успех",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                GoBack?.Invoke();
             }
             catch (Exception ex)
             {
@@ -586,6 +592,14 @@ namespace Diplom
             }
         }
 
+        private string GenerateRandomPassword(int length = 8)
+        {
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             GoBack?.Invoke();
@@ -595,5 +609,58 @@ namespace Diplom
         {
             GoBack?.Invoke();
         }
+
+
+
+
+
+
+        private void ContactTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string contact = ContactTextBox.Text?.Trim();
+
+            if (string.IsNullOrWhiteSpace(contact))
+            {
+                ContactTextBox.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0"));
+                return;
+            }
+
+            bool isValidEmail = SupabaseClient.IsValidEmail(contact);
+            bool isValidPhone = SupabaseClient.IsValidPhone(contact);
+
+            if (isValidEmail || isValidPhone)
+            {
+                ContactTextBox.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4CAF50"));
+            }
+            else
+            {
+                ContactTextBox.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E53E3E"));
+            }
+        }
+
+        private void ContactTextBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+            string contact = ContactTextBox.Text?.Trim();
+
+            if (string.IsNullOrWhiteSpace(contact))
+            {
+                ContactTextBox.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0"));
+                return;
+            }
+
+            bool isValidEmail = SupabaseClient.IsValidEmail(contact);
+            bool isValidPhone = SupabaseClient.IsValidPhone(contact);
+
+            if (isValidEmail || isValidPhone)
+            {
+                ContactTextBox.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#4CAF50"));
+            }
+            else
+            {
+                ContactTextBox.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E53E3E"));
+            }
+        }
+
+      
     }
 }

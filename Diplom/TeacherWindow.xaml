@@ -1,0 +1,206 @@
+﻿<Window x:Class="Diplom.TeacherWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Diplom"
+        mc:Ignorable="d"
+        Title="Электронный дневник - Преподаватель" 
+        Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Icon="/photo_2026-03-27_20-28-24.jpg">
+
+    <Window.Resources>
+        <!-- Стиль для кнопок навигации -->
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#666"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="20,0,10,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="6"
+                                Margin="5,2,5,2">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F5F7FF"/>
+                    <Setter Property="Foreground" Value="#5271FF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для активной кнопки навигации -->
+        <Style x:Key="NavButtonActiveStyle" TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
+            <Setter Property="Background" Value="#EEF2FF"/>
+            <Setter Property="Foreground" Value="#5271FF"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Боковая панель -->
+        <Border Grid.Column="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Логотип и заголовок -->
+                <StackPanel Grid.Row="0" Margin="20,25,20,30">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                        <Border Width="36" Height="36" CornerRadius="6" Margin="0,0,12,0">
+                            <Image Source="/photo_2026-03-27_20-28-24.jpg"/>
+                        </Border>
+                        <TextBlock Text="ДНЕВНИК" 
+                                   FontSize="18" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#333"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Border Background="#F5F7FF" Padding="12" CornerRadius="6">
+                        <StackPanel>
+                            <TextBlock Text="Преподаватель" 
+                                       FontSize="11" 
+                                       Foreground="#999"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock x:Name="TeacherNameText" 
+                                       Text="Преподаватель" 
+                                       FontSize="14" 
+                                       FontWeight="SemiBold"
+                                       Foreground="#333"/>
+                            <TextBlock x:Name="TeacherSubjectText" 
+                                       Text="Дисциплина" 
+                                       FontSize="11" 
+                                       Foreground="#666"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Навигация -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10,0,10,0">
+                        <TextBlock Text="ОСНОВНОЕ" 
+                                   FontSize="11" 
+                                   Foreground="#999" 
+                                   Margin="15,0,0,8"
+                                   FontWeight="SemiBold"/>
+
+                        <Button x:Name="DashboardButton" Content="📊 Дашборд" Style="{StaticResource NavButtonActiveStyle}"
+                                Click="DashboardButton_Click"/>
+
+                        <TextBlock Text="РАБОТА" 
+                                   FontSize="11" 
+                                   Foreground="#999" 
+                                   Margin="15,20,0,8"
+                                   FontWeight="SemiBold"/>
+
+                        <Button x:Name="ScheduleButton" Content="📅 Расписание" Style="{StaticResource NavButtonStyle}"
+                                Click="ScheduleButton_Click"/>
+                        <Button x:Name="GradesButton" Content="📝 Оценки" Style="{StaticResource NavButtonStyle}"
+                                Click="GradesButton_Click"/>
+                        <Button x:Name="HomeworkButton" Content="📚 Домашние задания" Style="{StaticResource NavButtonStyle}"
+                                Click="HomeworkButton_Click"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Выход -->
+                <Border Grid.Row="2" Margin="15,15,15,20">
+                    <Button Content="🚪 Выйти" 
+                            Height="45"
+                            Background="#FFF5F5"
+                            BorderBrush="#FFE0E0"
+                            BorderThickness="1"
+                            Foreground="#E53E3E"
+                            FontSize="14"
+                            Cursor="Hand"
+                            Click="LogoutButton_Click">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" 
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="6" 
+                                                    Padding="15,0">
+                                                <ContentPresenter HorizontalAlignment="Center" 
+                                                                  VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FFE5E5"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Основное содержимое -->
+        <Grid Grid.Column="1" Background="#F8F9FA">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Верхний заголовок -->
+            <Border Grid.Row="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" Padding="30,20">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock x:Name="ContentTitleText" 
+                                   Text="Дашборд преподавателя" 
+                                   FontSize="24" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="#333"/>
+                        <TextBlock x:Name="ContentSubtitleText" 
+                                   Text="Обзор учебного процесса" 
+                                   FontSize="13" 
+                                   Foreground="#999"
+                                   Margin="0,5,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Border Background="#F5F7FF" Padding="12,8" CornerRadius="6">
+                            <TextBlock x:Name="CurrentDateText" 
+                                       Text="" 
+                                       FontSize="13" 
+                                       Foreground="#5271FF"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Контент -->
+            <ContentControl x:Name="MainContent" Grid.Row="1"/>
+        </Grid>
+    </Grid>
+</Window>

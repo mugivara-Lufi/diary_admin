@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Diplom.Models;
+using Newtonsoft.Json.Linq;
 using Supabase;
 using static Diplom.SupabaseClient;
 
 namespace Diplom
 {
     public partial class MainWindow : Window
-    { 
+    {
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             var passwordBox = sender as PasswordBox;
@@ -80,17 +81,33 @@ namespace Diplom
                     // Проверяем роль пользователя
                     string role = user["role"]?.ToString();
 
-                    if (role == "admin")
+                    switch (role)
                     {
-                        // Сохраняем данные пользователя
-                        AuthService.CurrentUser = user;
+                        case "admin":
+                            // Сохраняем данные пользователя
+                            AuthService.CurrentUser = user;
+                            OpenAdminDashboard();
+                            break;
 
-                        // Открываем главное окно администратора
-                        OpenAdminDashboard();
-                    }
-                    else
-                    {
-                        ShowError("Недостаточно прав. Требуется роль администратора.");
+                        case "teacher":
+                            // Сохраняем данные пользователя
+                            AuthService.CurrentUser = user;
+                            // Загружаем данные преподавателя
+                            await LoadTeacherProfile(user["id"].Value<int>());
+                            OpenTeacherDashboard();
+                            break;
+
+                        case "student":
+                            ShowError("Студенческий доступ будет реализован в следующей версии.");
+                            break;
+
+                        case "parent":
+                            ShowError("Доступ для законных представителей будет реализован в следующей версии.");
+                            break;
+
+                        default:
+                            ShowError("Неизвестная роль пользователя. Обратитесь к администратору.");
+                            break;
                     }
                 }
                 else
@@ -105,6 +122,30 @@ namespace Diplom
             finally
             {
                 SetLoadingState(false);
+            }
+        }
+
+        private async Task LoadTeacherProfile(int userId)
+        {
+            try
+            {
+                var result = await SupabaseClient.ExecuteQuery("teachers", $"user_id=eq.{userId}&select=*,subjects(name)");
+                if (result != null && result.Count > 0)
+                {
+                    var teacher = result[0];
+                    AuthService.CurrentTeacher = new Teacher
+                    {
+                        Id = teacher["id"]?.Value<int>() ?? 0,
+                        FullName = teacher["full_name"]?.ToString() ?? "",
+                        SubjectId = teacher["subject_id"]?.Value<int?>(),
+                        Email = teacher["email"]?.ToString() ?? "",
+                        SubjectName = teacher["subjects"]?["name"]?.ToString() ?? ""
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Ошибка загрузки профиля преподавателя: {ex.Message}");
             }
         }
 
@@ -129,7 +170,6 @@ namespace Diplom
 
         private void ShowError(string message)
         {
-            // Можно добавить красивый вывод ошибок
             MessageBox.Show(message, "Ошибка авторизации",
                 MessageBoxButton.OK, MessageBoxImage.Error);
 
@@ -140,11 +180,15 @@ namespace Diplom
 
         private void OpenAdminDashboard()
         {
-            // Создаем и показываем окно администратора
             var adminWindow = new AdminWindow();
             adminWindow.Show();
+            this.Close();
+        }
 
-            // Закрываем окно авторизации
+        private void OpenTeacherDashboard()
+        {
+            var teacherWindow = new TeacherWindow();
+            teacherWindow.Show();
             this.Close();
         }
 

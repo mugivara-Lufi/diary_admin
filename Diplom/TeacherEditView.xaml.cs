@@ -38,6 +38,7 @@ namespace Diplom
             Teacher = teacher ?? new Teacher();
             Subjects = new ObservableCollection<Subject>();
 
+            // Подписываемся на событие изменения текста для валидации email
             Loaded += async (s, e) => await InitializeAsync();
         }
 
@@ -98,6 +99,36 @@ namespace Diplom
             SaveButton.Content = Teacher.Id > 0 ? "Обновить" : "Создать";
         }
 
+        private string GenerateRandomPassword(int length = 8)
+        {
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        private void ShowCredentialsDialog(string login, string password, string email = null)
+        {
+            // Копируем данные в буфер обмена
+            string credentials = $"Логин: {login}\nПароль: {password}";
+            System.Windows.Clipboard.SetText(credentials);
+
+            string emailMessage = string.IsNullOrEmpty(email)
+                ? "\n\n✉️ Email не указан или указан неверно.\nЧтобы получать данные на почту, укажите корректный email."
+                : $"\n\n✉️ Данные также отправлены на email: {email}";
+
+            MessageBox.Show(
+                $"✅ Преподаватель успешно добавлен!\n\n" +
+                $"📋 ДАННЫЕ ДЛЯ ВХОДА:\n" +
+                $"   Логин: {login}\n" +
+                $"   Пароль: {password}\n\n" +
+                $"📝 Данные скопированы в буфер обмена!\n" +
+                $"Сообщите их преподавателю.{emailMessage}",
+                "Успех",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             if (!ValidateForm()) return;
@@ -125,25 +156,85 @@ namespace Diplom
 
                 if (Teacher.Id > 0)
                 {
+                    // Обновление существующего преподавателя
                     await SupabaseClient.UpdateTeacher(
                         Teacher.Id,
                         Teacher.FullName.Trim(),
                         subjectId,
                         Teacher.Email
                     );
+
+                    MessageBox.Show("Преподаватель успешно обновлен", "Успех",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    await SupabaseClient.AddTeacher(
+                    // Создание нового преподавателя с пользователем
+                    string generatedPassword = GenerateRandomPassword();
+
+                    var (teacherResult, userResult) = await SupabaseClient.AddTeacherWithUser(
                         Teacher.FullName.Trim(),
                         subjectId,
-                        Teacher.Email
+                        Teacher.Email,
+                        generatedPassword
                     );
+
+                    if (teacherResult != null && teacherResult.Count > 0)
+                    {
+                        Teacher.Id = teacherResult[0]["id"].Value<int>();
+                        string login = userResult[0]["login"].Value<string>();
+
+                        // Отправляем данные на email, если он указан и валидный
+                        if (!string.IsNullOrEmpty(Teacher.Email) && IsValidEmail(Teacher.Email))
+                        {
+                            try
+                            {
+                                bool sent = await SupabaseClient.SendLoginCredentials(
+                                    Teacher.Email,
+                                    login,
+                                    generatedPassword,
+                                    Teacher.FullName,
+                                    "teacher"
+                                );
+
+                                if (sent)
+                                {
+                                    MessageBox.Show(
+                                        $"Преподаватель успешно добавлен!\n\n" +
+                                        $"Данные для входа отправлены на email: {Teacher.Email}\n\n" +
+                                        $"Логин: {login}\n" +
+                                        $"Пароль: {generatedPassword}\n\n" +
+                                        $"Если письмо не пришло, проверьте папку Спам.",
+                                        "Успех",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Information);
+                                }
+                                else
+                                {
+                                    ShowCredentialsDialog(login, generatedPassword, Teacher.Email);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(
+                                    $"Преподаватель успешно добавлен!\n\n" +
+                                    $"НО: Не удалось отправить письмо: {ex.Message}\n\n" +
+                                    $"Логин: {login}\n" +
+                                    $"Пароль: {generatedPassword}\n\n" +
+                                    $"Сообщите эти данные преподавателю вручную.",
+                                    "Внимание",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Warning);
+                            }
+                        }
+                        else
+                        {
+                            ShowCredentialsDialog(login, generatedPassword);
+                        }
+                    }
                 }
 
                 SaveCompleted?.Invoke(true);
-                MessageBox.Show(Teacher.Id > 0 ? "Преподаватель успешно обновлен" : "Преподаватель успешно добавлен",
-                    "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -172,7 +263,7 @@ namespace Diplom
         private const int MAX_EMAIL_LENGTH = 100;
 
         // Разрешаем буквы (латиница/кириллица), пробел, дефис, апостроф
-        private readonly Regex _nameRegex = new Regex(@"^[а-яА-ЯёЁ\s\-']+$", RegexOptions.Compiled);
+        private readonly Regex _nameRegex = new Regex(@"^[а-яА-ЯёЁa-zA-Z\s\-']+$", RegexOptions.Compiled);
         private readonly Regex _emailRegex = new Regex(@"^[a-zA-Z0-9@\.\-_]+$");
 
         // Флаг, чтобы не ловить TextChanged, пока сами правим Text
@@ -222,29 +313,33 @@ namespace Diplom
                 textBox.CaretIndex = Math.Min(cleaned.Length, oldCaret);
                 _isInternalTextChange = false;
             }
-
-            // Во время ввода не показываем MessageBox, только финальная проверка в ValidateForm.
-            // Можно подсвечивать контрол, если хочешь, но без окон.
         }
 
-        // Валидация email при потере фокуса
-        private void EmailTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            var textBox = (TextBox)sender;
-
-            if (!string.IsNullOrWhiteSpace(textBox.Text) && !IsValidEmail(textBox.Text))
-            {
-                ShowValidationError("Введите корректный email адрес");
-                //textBox.Focus();
-            }
-        }
-
+        // Валидация email при вводе (цветовая индикация)
         private void EmailTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (_isInternalTextChange)
                 return;
 
             var textBox = (TextBox)sender;
+            string email = textBox.Text?.Trim();
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                textBox.BorderBrush = new SolidColorBrush(Color.FromRgb(224, 224, 224));
+                return;
+            }
+
+            bool isValidEmail = IsValidEmail(email);
+
+            if (isValidEmail)
+            {
+                textBox.BorderBrush = new SolidColorBrush(Color.FromRgb(76, 175, 80)); // Зеленый
+            }
+            else
+            {
+                textBox.BorderBrush = new SolidColorBrush(Color.FromRgb(229, 62, 62)); // Красный
+            }
 
             if (textBox.Text.Length > MAX_EMAIL_LENGTH)
             {
@@ -252,8 +347,18 @@ namespace Diplom
                 textBox.Text = textBox.Text.Substring(0, MAX_EMAIL_LENGTH);
                 textBox.CaretIndex = textBox.Text.Length;
                 _isInternalTextChange = false;
-
                 ShowValidationError($"Email не может превышать {MAX_EMAIL_LENGTH} символов");
+            }
+        }
+
+        private void EmailTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+
+            if (!string.IsNullOrWhiteSpace(textBox.Text) && !IsValidEmail(textBox.Text))
+            {
+                ShowValidationError("Введите корректный email адрес");
+                textBox.BorderBrush = new SolidColorBrush(Color.FromRgb(229, 62, 62));
             }
         }
 
@@ -265,9 +370,15 @@ namespace Diplom
 
             email = email.Trim();
 
-            return _emailRegex.IsMatch(email) &&
-                   !email.Contains(" ") &&
-                   email.Count(c => c == '@') == 1;
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email && !email.Contains(" ");
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private bool IsValidFullName(string fullName)
@@ -300,7 +411,7 @@ namespace Diplom
                 MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
-        // Итоговая проверка формы (например, перед сохранением)
+        // Итоговая проверка формы (перед сохранением)
         private bool ValidateForm()
         {
             if (!IsValidFullName(Teacher.FullName))

@@ -145,6 +145,7 @@ namespace Diplom.Models
         public string Topic { get; set; }
 
 
+        public string ClassName { get; set; }
         public string SubjectName { get; set; }
 
         public string TeacherName { get; set; }
@@ -188,4 +189,5 @@ namespace Diplom.Models
         public string Message { get; set; }
         public DateTime SendDate { get; set; }
     }
+
 }

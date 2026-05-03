@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Diplom"
-             mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="600">
+             mc:Ignorable="d" d:DesignWidth="600" Height="718">
 
     <UserControl.Resources>
         <!-- Стиль для меток полей -->
