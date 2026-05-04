@@ -1,6 +1,8 @@
 ﻿using Diplom.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Postgrest.Attributes;
+using Postgrest.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1078,5 +1080,216 @@ namespace Diplom
         {
             return Services.NotificationService.IsValidPhone(phone);
         }
+
+
+
+
+        #region Учебный план
+
+        /// <summary>
+        /// Получить предметы из учебного плана для группы на семестр
+        /// </summary>
+        public static async Task<JArray> GetSubjectsByCurriculum(int classId, int semester)
+        {
+            // Сначала получаем текущий учебный план для класса
+            var curricula = await ExecuteQuery("curricula",
+                $"class_id=eq.{classId}&is_current=eq.true&select=id");
+
+            if (curricula == null || curricula.Count == 0)
+                return new JArray();
+
+            int curriculumId = curricula[0]["id"].Value<int>();
+
+            return await ExecuteQuery("curriculum_subjects",
+                $"curriculum_id=eq.{curriculumId}&semester=eq.{semester}&select=*,subjects(*)");
+        }
+
+        /// <summary>
+        /// Получить всех преподавателей, закрепленных за предметами учебного плана группы
+        /// </summary>
+        public static async Task<JArray> GetTeachersByCurriculum(int classId, int semester)
+        {
+            // Получаем текущий учебный план
+            var curricula = await ExecuteQuery("curricula",
+                $"class_id=eq.{classId}&is_current=eq.true&select=id");
+
+            if (curricula == null || curricula.Count == 0)
+                return new JArray();
+
+            int curriculumId = curricula[0]["id"].Value<int>();
+
+            return await ExecuteQuery("subject_teachers",
+                $"curriculum_subject_id=in.(SELECT id FROM curriculum_subjects WHERE curriculum_id=eq.{curriculumId} AND semester=eq.{semester})&select=*,teachers(*)");
+        }
+        /// <summary>
+        /// Получить текущий семестр группы
+        /// </summary>
+        public static async Task<int> GetCurrentSemester(int classId)
+        {
+            // Если поле semester отсутствует в classes, можно вычислять по учебному году
+            // или всегда возвращать 1-2 семестр в зависимости от текущего месяца
+            int month = DateTime.Now.Month;
+            return month >= 9 || month <= 1 ? 1 : 2; // 1 семестр: сентябрь-январь, 2 семестр: февраль-июнь
+        }
+
+        /// <summary>
+        /// Получить учебный план группы с предметами на семестр
+        /// </summary>
+        public static async Task<JArray> GetCurriculumWithSubjects(int classId, int semester)
+        {
+            var curricula = await ExecuteQuery("curricula",
+                $"class_id=eq.{classId}&is_current=eq.true&select=id");
+
+            if (curricula == null || curricula.Count == 0)
+                return new JArray();
+
+            int curriculumId = curricula[0]["id"].Value<int>();
+
+            return await ExecuteQuery("curriculum_subjects",
+                $"curriculum_id=eq.{curriculumId}&semester=eq.{semester}&select=*,subjects(*),subject_teachers(*,teachers(*))");
+        }
+
+        #endregion
+
+        #region Учебный план
+
+        /// <summary>
+        /// Получить учебный план группы
+        /// </summary>
+        public static async Task<JArray> GetCurriculumByClass(int classId)
+        {
+            return await ExecuteQuery("curricula",
+                $"class_id=eq.{classId}&is_current=eq.true&select=*,curriculum_subjects(*,subjects(*),subject_teachers(*,teachers(*)))");
+        }
+
+        /// <summary>
+        /// Получить список предметов для группы по семестру
+        /// </summary>
+        public static async Task<List<int>> GetSubjectIdsByClass(int classId, int semester)
+        {
+            var curriculum = await GetCurriculumByClass(classId);
+            if (curriculum == null || curriculum.Count == 0) return new List<int>();
+
+            var curriculumId = curriculum[0]["id"].Value<int>();
+
+            var subjects = await ExecuteQuery("curriculum_subjects",
+                $"curriculum_id=eq.{curriculumId}&semester=eq.{semester}&select=subject_id");
+
+            var subjectIds = new List<int>();
+            foreach (var item in subjects)
+            {
+                subjectIds.Add(item["subject_id"].Value<int>());
+            }
+            return subjectIds;
+        }
+
+        /// <summary>
+        /// Добавить учебный план для группы
+        /// </summary>
+        public static async Task<JArray> AddCurriculum(string name, int classId, string academicYear, bool isCurrent = false)
+        {
+            var data = new
+            {
+                name = name,
+                class_id = classId,
+                academic_year = academicYear,
+                is_current = isCurrent
+            };
+            return await Insert("curricula", data);
+        }
+
+        /// <summary>
+        /// Обновить учебный план
+        /// </summary>
+        public static async Task<JArray> UpdateCurriculum(int id, string name, bool isCurrent)
+        {
+            var data = new { name = name, is_current = isCurrent };
+            return await Update("curricula", $"id=eq.{id}", data);
+        }
+
+        /// <summary>
+        /// Удалить учебный план
+        /// </summary>
+        public static async Task<bool> DeleteCurriculum(int id)
+        {
+            return await Delete("curricula", $"id=eq.{id}");
+        }
+
+        /// <summary>
+        /// Получить все учебные планы с деталями
+        /// </summary>
+        public static async Task<JArray> GetCurriculaWithDetails()
+        {
+            return await ExecuteQuery("curricula",
+                "select=*,classes(name),curriculum_subjects(id)");
+        }
+
+        /// <summary>
+        /// Получить учебный план по ID с деталями
+        /// </summary>
+        public static async Task<JObject> GetCurriculumById(int id)
+        {
+            return await GetSingle("curricula",
+                $"id=eq.{id}&select=*,classes(name),curriculum_subjects(*,subjects(*),subject_teachers(*,teachers(*)))");
+        }
+
+        /// <summary>
+        /// Добавить предмет в учебный план
+        /// </summary>
+        public static async Task<JArray> AddCurriculumSubject(int curriculumId, int subjectId, int semester,
+            int hoursPerWeek = 2, int totalHours = 68, string attestationType = "credit")
+        {
+            var data = new
+            {
+                curriculum_id = curriculumId,
+                subject_id = subjectId,
+                semester = semester,
+                hours_per_week = hoursPerWeek,
+                total_hours = totalHours,
+                attestation_type = attestationType
+            };
+            return await Insert("curriculum_subjects", data);
+        }
+
+        /// <summary>
+        /// Удалить предмет из учебного плана
+        /// </summary>
+        public static async Task<bool> DeleteCurriculumSubject(int id)
+        {
+            return await Delete("curriculum_subjects", $"id=eq.{id}");
+        }
+
+        /// <summary>
+        /// Назначить преподавателя на дисциплину
+        /// </summary>
+        public static async Task<JArray> AssignTeacherToSubject(int curriculumSubjectId, int teacherId, bool isMain = true)
+        {
+            var data = new
+            {
+                curriculum_subject_id = curriculumSubjectId,
+                teacher_id = teacherId,
+                is_main = isMain
+            };
+            return await Insert("subject_teachers", data);
+        }
+
+        /// <summary>
+        /// Получить преподавателей для дисциплины
+        /// </summary>
+        public static async Task<JArray> GetTeachersForCurriculumSubject(int curriculumSubjectId)
+        {
+            return await ExecuteQuery("subject_teachers",
+                $"curriculum_subject_id=eq.{curriculumSubjectId}&select=*,teachers(*)");
+        }
+
+        /// <summary>
+        /// Удалить преподавателя с дисциплины
+        /// </summary>
+        public static async Task<bool> RemoveTeacherFromSubject(int subjectTeacherId)
+        {
+            return await Delete("subject_teachers", $"id=eq.{subjectTeacherId}");
+        }
+
+        #endregion
     }
 }

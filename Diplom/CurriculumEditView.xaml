@@ -1,0 +1,106 @@
+﻿<UserControl x:Class="Diplom.CurriculumEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignWidth="500"
+             Background="White" Height="552">
+
+    <UserControl.Resources>
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Background" Value="#5271FF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4060E8"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#666"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F8F9FA"/>
+                    <Setter Property="BorderBrush" Value="#5271FF"/>
+                    <Setter Property="Foreground" Value="#5271FF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="25">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="📋 Учебный план" FontSize="20" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,20"/>
+
+            <TextBlock Grid.Row="1" Text="Название плана" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,5"/>
+            <TextBox x:Name="NameBox" Style="{StaticResource FormTextBox}" Grid.Row="2" Height="40" Padding="12" FontSize="14" 
+                     BorderBrush="#E0E0E0" BorderThickness="1" Margin="0,0,0,15"/>
+
+            <TextBlock Grid.Row="3" Text="Группа" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,5"/>
+            <ComboBox x:Name="ClassComboBox" Grid.Row="4" Height="40" FontSize="13"
+                      DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,0,0,15"/>
+
+            <TextBlock Grid.Row="5" Text="Учебный год" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,5"/>
+            <ComboBox x:Name="YearComboBox" Grid.Row="6" Height="40" FontSize="13" Margin="0,0,0,20">
+                <ComboBoxItem Content="2024-2025"/>
+                <ComboBoxItem Content="2025-2026"/>
+                <ComboBoxItem Content="2026-2027"/>
+            </ComboBox>
+
+            <CheckBox x:Name="IsCurrentCheck" Grid.Row="5" Content="Является текущим планом" 
+                      FontSize="13" Foreground="#333" Margin="0,20,224,250" Grid.RowSpan="2"/>
+
+            <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,206,0,0">
+                <Button Content="Отмена" Width="100" Height="38" 
+                        Style="{StaticResource SecondaryButton}" Click="CancelButton_Click" Margin="0,0,10,0"/>
+                <Button Content="Сохранить" Width="100" Height="38" 
+                        Style="{StaticResource PrimaryButton}" Click="SaveButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

@@ -74,7 +74,16 @@
                                   SelectedValuePath="Id"
                                   SelectionChanged="SubjectComboBox_SelectionChanged" Height="40"/>
                     </StackPanel>
-
+                    <Border x:Name="SubjectInfoPanel" Background="#E8F5E9" 
+        Padding="12" CornerRadius="6" Margin="0,5,0,15"
+        Visibility="Collapsed">
+                        <StackPanel>
+                            <TextBlock Text="📊 Информация из учебного плана" 
+                   FontSize="12" FontWeight="SemiBold" 
+                   Foreground="#2E7D32" Margin="0,0,0,5"/>
+                            <TextBlock x:Name="SubjectHoursText" FontSize="11" Foreground="#666"/>
+                        </StackPanel>
+                    </Border>
                     <!-- Преподаватель -->
                     <StackPanel Margin="0,0,0,20">
                         <TextBlock Text="Преподаватель *" 

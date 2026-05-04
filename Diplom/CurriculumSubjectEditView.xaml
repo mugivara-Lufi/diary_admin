@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="Diplom.CurriculumSubjectEditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Diplom"
+             mc:Ignorable="d" d:DesignWidth="800" Height="570">
+    <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="25">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="📚 Предмет" FontSize="20" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,20"/>
+
+            <TextBlock Grid.Row="1" Text="Дисциплина" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,5"/>
+            <ComboBox x:Name="SubjectComboBox" Grid.Row="2" Height="40" FontSize="13" Style="{StaticResource FormComboBox}"
+                      DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,0,0,15" />
+
+            <TextBlock Grid.Row="3" Text="Семестр" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,5"/>
+            <ComboBox x:Name="SemesterComboBox" Grid.Row="4" Height="40"   Style="{StaticResource FormComboBox}"  FontSize="13" Margin="0,0,0,15">
+                <ComboBoxItem Content="1 семестр" Tag="1"/>
+                <ComboBoxItem Content="2 семестр" Tag="2"/>
+            </ComboBox>
+
+            <Grid Grid.Row="5" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="Часов в неделю" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,5"/>
+                    <TextBox x:Name="HoursPerWeekBox" Height="40" FontSize="13" Text="2"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="Всего часов" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,5"/>
+                    <TextBox x:Name="TotalHoursBox" Height="40" FontSize="13" Text="68"/>
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Grid.Row="6" Text="Тип аттестации" FontWeight="SemiBold" Foreground="#333" Margin="0,0,0,5"/>
+            <ComboBox x:Name="AttestationComboBox" Style="{StaticResource FormComboBox}" Grid.Row="7" Height="40" FontSize="13" VerticalAlignment="Top">
+                <ComboBoxItem Content="Зачет" Tag="credit"/>
+                <ComboBoxItem Content="Экзамен" Tag="exam"/>
+            </ComboBox>
+
+            <Border Grid.Row="7" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0" Padding="30,15" VerticalAlignment="Top" Margin="0,60,0,0">
+                <Grid Margin="0,0,-20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="192*"/>
+                        <ColumnDefinition Width="497*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                        <Button Content="Отмена" 
+                      Style="{StaticResource SecondaryButton}" 
+                      Click="CancelButton_Click"
+                      Margin="0,0,10,0"/>
+                        <Button Content="💾 Сохранить" 
+                      Style="{StaticResource PrimaryButton}" 
+                      Click="SaveButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

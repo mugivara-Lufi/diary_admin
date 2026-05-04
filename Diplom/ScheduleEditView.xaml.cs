@@ -123,24 +123,46 @@ namespace Diplom
             }
         }
 
+        // Замените метод LoadSubjectsAsync и LoadTeachersAsync
+
         private async System.Threading.Tasks.Task LoadSubjectsAsync()
         {
             try
             {
-                var result = await SupabaseClient.GetAllSubjects();
+                // Получаем текущий семестр группы
+                int semester = await SupabaseClient.GetCurrentSemester(_classId);
+
+                // Получаем предметы только из учебного плана
+                var result = await SupabaseClient.GetSubjectsByCurriculum(_classId, semester);
                 _subjects.Clear();
+
+                if (result == null || result.Count == 0)
+                {
+                    // Если нет учебного плана, показываем сообщение
+                    MessageBox.Show("Для этой группы не настроен учебный план. Сначала добавьте предметы в учебный план.",
+                        "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    SubjectComboBox.IsEnabled = false;
+                    TeacherComboBox.IsEnabled = false;
+                    return;
+                }
+
+                SubjectComboBox.IsEnabled = true;
 
                 foreach (var item in result)
                 {
-                    if (item?["id"] == null || item["id"].Type == JTokenType.Null) continue;
+                    var subjectToken = item["subjects"];
+                    if (subjectToken == null || subjectToken.Type == JTokenType.Null) continue;
 
-                    int id = item["id"].Value<int>();
+                    int id = subjectToken["id"]?.Value<int>() ?? 0;
                     if (id <= 0) continue;
 
                     var subject = new Subject
                     {
                         Id = id,
-                        Name = item["name"]?.ToString() ?? "Не указано"
+                        Name = subjectToken["name"]?.ToString() ?? "Не указано",
+                        // Сохраняем curriculum_subject_id для доп. информации
+                        TotalHours = item["total_hours"]?.Value<int>() ?? 0,
+                        HoursPerWeek = item["hours_per_week"]?.Value<int>() ?? 0
                     };
                     _subjects.Add(subject);
                 }
@@ -154,6 +176,10 @@ namespace Diplom
                     SubjectComboBox.SelectedValue = CurrentSchedule.SubjectId.Value;
                     SubjectComboBox_SelectionChanged(SubjectComboBox, null);
                 }
+                else if (_subjects.Any())
+                {
+                    SubjectComboBox.SelectedIndex = 0;
+                }
             }
             catch (Exception ex)
             {
@@ -166,37 +192,79 @@ namespace Diplom
         {
             try
             {
-                var result = await SupabaseClient.GetTeachersWithSubjects();
                 _teachers.Clear();
 
-                foreach (var item in result)
-                {
-                    if (item?["id"] == null || item["id"].Type == JTokenType.Null) continue;
+                JArray teachersResult = null;
+                int semester = 1;
 
-                    int id = item["id"].Value<int>();
+                try
+                {
+                    semester = await SupabaseClient.GetCurrentSemester(_classId);
+                    // Попытка загрузить через учебный план
+                    teachersResult = await SupabaseClient.GetTeachersByCurriculum(_classId, semester);
+                }
+                catch
+                {
+                    // fallback
+                }
+
+                // 👇 ДИАГНОСТИКА — покажет, что реально вернул API
+                System.Diagnostics.Debug.WriteLine($"[DEBUG] GetTeachersByCurriculum returned: {(teachersResult == null ? "null" : teachersResult.ToString())}");
+
+                // Если не получили через учебный план — загружаем всех преподавателей
+                if (teachersResult == null || teachersResult.Count == 0)
+                {
+                    teachersResult = await SupabaseClient.ExecuteQuery("teachers", "select=*");
+                }
+
+                var uniqueTeachers = new Dictionary<int, Teacher>();
+
+                foreach (var item in teachersResult)
+                {
+                    // Обрабатываем оба случая: плоская структура или вложенная
+                    JToken teacherToken = null;
+
+                    if (item["teachers"] != null && item["teachers"].Type != JTokenType.Null)
+                        teacherToken = item["teachers"];
+                    else if (item["full_name"] != null)
+                        teacherToken = item;
+
+                    if (teacherToken == null) continue;
+
+                    int id = teacherToken["id"]?.Value<int>() ?? 0;
                     if (id <= 0) continue;
 
-                    var teacher = new Teacher
+                    if (!uniqueTeachers.ContainsKey(id))
                     {
-                        Id = id,
-                        FullName = item["full_name"]?.ToString() ?? "Не указано",
-                        SubjectId = item["subject_id"]?.Type == JTokenType.Null ? (int?)null : item["subject_id"]?.Value<int?>(),
-                        Email = item["email"]?.ToString() ?? ""
-                    };
-                    _teachers.Add(teacher);
+                        uniqueTeachers.Add(id, new Teacher
+                        {
+                            Id = id,
+                            FullName = teacherToken["full_name"]?.ToString() ?? "Не указано",
+                            SubjectId = teacherToken["subject_id"]?.Value<int?>(),
+                            Email = teacherToken["email"]?.ToString() ?? ""
+                        });
+                    }
                 }
+
+                foreach (var teacher in uniqueTeachers.Values)
+                    _teachers.Add(teacher);
 
                 TeacherComboBox.DisplayMemberPath = "FullName";
                 TeacherComboBox.SelectedValuePath = "Id";
                 TeacherComboBox.ItemsSource = _teachers;
 
                 if (CurrentSchedule.TeacherId.HasValue && CurrentSchedule.TeacherId.Value > 0)
-                    TeacherComboBox.SelectedValue = CurrentSchedule.TeacherId.Value;
+                {
+                    var exists = _teachers.Any(t => t.Id == CurrentSchedule.TeacherId.Value);
+                    if (exists)
+                        TeacherComboBox.SelectedValue = CurrentSchedule.TeacherId.Value;
+                    else
+                        CurrentSchedule.TeacherId = null;
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки преподавателей: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] LoadTeachers: {ex}");
             }
         }
 
@@ -432,26 +500,41 @@ namespace Diplom
             }
         }
 
-        private void SubjectComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void SubjectComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SubjectComboBox.SelectedItem is not Subject selectedSubject) return;
 
             CurrentSchedule.SubjectId = selectedSubject.Id;
 
-            var subjectTeachers = _teachers.Where(t => t.SubjectId.HasValue && t.SubjectId.Value == selectedSubject.Id).ToList();
-            TeacherComboBox.ItemsSource = subjectTeachers;
+            // Показываем информацию из учебного плана
+            await UpdateSubjectInfo(selectedSubject);
+
+            // Фильтруем преподавателей, которые закреплены за выбранным предметом в учебном плане
+            var filteredTeachers = _teachers.Where(t => t.SubjectId == selectedSubject.Id).ToList();
+
+            // Если нет преподавателей по предмету, показываем всех из плана
+            if (filteredTeachers.Any())
+            {
+                TeacherComboBox.ItemsSource = filteredTeachers;
+            }
+            else
+            {
+                TeacherComboBox.ItemsSource = _teachers;
+            }
 
             if (CurrentSchedule.TeacherId.HasValue)
             {
-                var existing = subjectTeachers.FirstOrDefault(t => t.Id == CurrentSchedule.TeacherId.Value);
+                var existing = TeacherComboBox.ItemsSource.Cast<Teacher>()
+                    .FirstOrDefault(t => t.Id == CurrentSchedule.TeacherId.Value);
+
                 if (existing != null)
                 {
                     TeacherComboBox.SelectedValue = existing.Id;
                 }
-                else if (subjectTeachers.Any())
+                else if (TeacherComboBox.ItemsSource.Cast<Teacher>().Any())
                 {
                     TeacherComboBox.SelectedIndex = 0;
-                    CurrentSchedule.TeacherId = subjectTeachers[0].Id;
+                    CurrentSchedule.TeacherId = (TeacherComboBox.SelectedItem as Teacher)?.Id;
                 }
                 else
                 {
@@ -459,10 +542,10 @@ namespace Diplom
                     CurrentSchedule.TeacherId = null;
                 }
             }
-            else if (subjectTeachers.Any())
+            else if (TeacherComboBox.ItemsSource.Cast<Teacher>().Any())
             {
                 TeacherComboBox.SelectedIndex = 0;
-                CurrentSchedule.TeacherId = subjectTeachers[0].Id;
+                CurrentSchedule.TeacherId = (TeacherComboBox.SelectedItem as Teacher)?.Id;
             }
             else
             {
@@ -471,6 +554,160 @@ namespace Diplom
             }
 
             _ = CheckForConflicts();
+        }
+
+        /// <summary>
+        /// Обновляет информационную панель с данными из учебного плана
+        /// </summary>
+        private async System.Threading.Tasks.Task UpdateSubjectInfo(Subject selectedSubject)
+        {
+            try
+            {
+                int semester = await SupabaseClient.GetCurrentSemester(_classId);
+
+                // Получаем данные из curriculum_subjects для выбранного предмета
+                var curricula = await SupabaseClient.ExecuteQuery("curricula",
+                    $"class_id=eq.{_classId}&is_current=eq.true&select=id");
+
+                if (curricula == null || curricula.Count == 0)
+                {
+                    SubjectInfoPanel.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                int curriculumId = curricula[0]["id"].Value<int>();
+
+                var curriculumSubjects = await SupabaseClient.ExecuteQuery("curriculum_subjects",
+                    $"curriculum_id=eq.{curriculumId}&semester=eq.{semester}&subject_id=eq.{selectedSubject.Id}&select=*");
+
+                if (curriculumSubjects == null || curriculumSubjects.Count == 0)
+                {
+                    SubjectInfoPanel.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                var curriculumSubject = curriculumSubjects[0];
+                int totalHours = curriculumSubject["total_hours"]?.Value<int>() ?? 0;
+                int hoursPerWeek = curriculumSubject["hours_per_week"]?.Value<int>() ?? 0;
+                string attestationType = curriculumSubject["attestation_type"]?.ToString() ?? "зачёт";
+
+                // Считаем, сколько занятий уже поставлено по этому предмету для группы в этом семестре
+                int usedHours = await GetUsedHoursCount(selectedSubject.Id, semester);
+                int remainingHours = Math.Max(0, totalHours - usedHours * 2); // каждое занятие = 2 часа (пара)
+                int usedPairs = usedHours;
+                int totalPairs = totalHours / 2;
+                int remainingPairs = Math.Max(0, totalPairs - usedPairs);
+
+                // Формируем информационное сообщение
+                var infoLines = new List<string>();
+
+                // Прогресс-бар (текстовый)
+                double progressPercent = totalPairs > 0 ? Math.Min(100.0, (double)usedPairs / totalPairs * 100) : 0;
+                string progressBar = GetProgressBar(progressPercent);
+
+                infoLines.Add($"📚 {selectedSubject.Name}");
+                infoLines.Add($"📋 План: {totalHours} часов ({totalPairs} пар) • {hoursPerWeek} ч/нед");
+                infoLines.Add($"✅ Проведено: {usedPairs} пар ({usedHours} часов)");
+                infoLines.Add($"⏳ Осталось: {remainingPairs} пар ({remainingHours} часов)");
+                infoLines.Add($"📊 Прогресс: {progressBar} {progressPercent:F0}%");
+                infoLines.Add($"📝 Аттестация: {GetAttestationTypeName(attestationType)}");
+
+                // Предупреждение, если часов почти не осталось
+                if (remainingPairs <= 2 && totalPairs > 0)
+                {
+                    infoLines.Add($"⚠️ Внимание! Осталось мало занятий по плану.");
+                }
+
+                // Предупреждение, если превышен план
+                if (usedPairs > totalPairs && totalPairs > 0)
+                {
+                    infoLines.Add($"⚠️ Превышение плана на {usedPairs - totalPairs} пар!");
+                    SubjectInfoPanel.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3E0"));
+                }
+                else
+                {
+                    SubjectInfoPanel.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E8F5E9"));
+                }
+
+                SubjectHoursText.Text = string.Join("\n", infoLines);
+                SubjectInfoPanel.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating subject info: {ex.Message}");
+                SubjectInfoPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// Подсчитывает количество уже проведенных занятий по предмету в этом семестре
+        /// </summary>
+        private async System.Threading.Tasks.Task<int> GetUsedHoursCount(int subjectId, int semester)
+        {
+            try
+            {
+                // Определяем даты начала семестра
+                DateTime semesterStart;
+                DateTime semesterEnd;
+
+                if (semester == 1)
+                {
+                    // 1 семестр: сентябрь - январь
+                    semesterStart = new DateTime(DateTime.Now.Year, 9, 1);
+                    if (DateTime.Now.Month < 9)
+                        semesterStart = new DateTime(DateTime.Now.Year - 1, 9, 1);
+                    semesterEnd = new DateTime(semesterStart.Year + 1, 1, 31);
+                }
+                else
+                {
+                    // 2 семестр: февраль - июнь
+                    semesterStart = new DateTime(DateTime.Now.Year, 2, 1);
+                    semesterEnd = new DateTime(DateTime.Now.Year, 6, 30);
+                }
+
+                string dateFrom = semesterStart.ToString("yyyy-MM-dd");
+                string dateTo = semesterEnd.ToString("yyyy-MM-dd");
+
+                // Считаем количество записей в расписании для этого предмета и класса
+                var scheduleCount = await SupabaseClient.ExecuteQuery("schedule",
+                    $"class_id=eq.{_classId}&subject_id=eq.{subjectId}&lesson_date=gte.{dateFrom}&lesson_date=lte.{dateTo}&select=id");
+
+                return scheduleCount?.Count ?? 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error counting used hours: {ex.Message}");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Создает текстовый прогресс-бар
+        /// </summary>
+        private string GetProgressBar(double percent, int length = 10)
+        {
+            int filledBlocks = (int)Math.Round(percent / 100 * length);
+            int emptyBlocks = length - filledBlocks;
+
+            string filled = new string('█', filledBlocks);
+            string empty = new string('░', emptyBlocks);
+
+            return $"[{filled}{empty}]";
+        }
+
+        /// <summary>
+        /// Возвращает читаемое название типа аттестации
+        /// </summary>
+        private string GetAttestationTypeName(string type)
+        {
+            return type?.ToLower() switch
+            {
+                "credit" => "Зачёт",
+                "exam" => "Экзамен",
+                "diff_credit" => "Дифф. зачёт",
+                "coursework" => "Курсовая работа",
+                _ => type ?? "Не указано"
+            };
         }
 
         private bool ValidateForm()

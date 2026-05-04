@@ -218,7 +218,7 @@ namespace Diplom
         private void UpdateNavigationStyle(string activeButton)
         {
             // Сброс стилей всех кнопок
-            var buttons = new[] { "Dashboard", "Students", "Teachers", "Classes", "Subjects", "Schedule", "Reports" };
+            var buttons = new[] { "Dashboard", "Students", "Teachers", "Classes", "Subjects", "Schedule", "Curriculum", "Reports" };
 
             foreach (var buttonName in buttons)
             {
@@ -233,6 +233,18 @@ namespace Diplom
             {
                 activeBtn.Style = (Style)FindResource("NavButtonActiveStyle");
             }
+        }
+        private void CurriculumButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowCurriculum();
+        }
+
+        private void ShowCurriculum()
+        {
+            MainContent.Content = new CurriculumView();
+            ContentTitleText.Text = "Учебный план";
+            ContentSubtitleText.Text = "Составление учебного плана для групп";
+            UpdateNavigationStyle("Curriculum");
         }
     }
 }

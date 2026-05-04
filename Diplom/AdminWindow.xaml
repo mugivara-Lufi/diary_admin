@@ -131,7 +131,8 @@
                                 Click="SubjectsButton_Click"/>
                         <Button x:Name="ScheduleButton" Content="📅 Расписание" Style="{StaticResource NavButtonStyle}" 
                                 Click="ScheduleButton_Click"/>
-
+                        <Button x:Name="CurriculumButton" Content="📋 Учебный план" Style="{StaticResource NavButtonStyle}" 
+                                Click="CurriculumButton_Click"/>
                         <TextBlock Text="ДРУГОЕ" 
                                    FontSize="11" 
                                    Foreground="#999" 
