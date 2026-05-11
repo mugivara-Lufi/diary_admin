@@ -119,6 +119,8 @@
 
                         <Button x:Name="ScheduleButton" Content="📅 Расписание" Style="{StaticResource NavButtonStyle}"
                                 Click="ScheduleButton_Click"/>
+                        <Button x:Name="AttendanceButton" Content="✅ Посещаемость" Style="{StaticResource NavButtonStyle}"
+                                Click="AttendanceButton_Click"/>
                         <Button x:Name="GradesButton" Content="📝 Оценки" Style="{StaticResource NavButtonStyle}"
                                 Click="GradesButton_Click"/>
                         <Button x:Name="HomeworkButton" Content="📚 Домашние задания" Style="{StaticResource NavButtonStyle}"

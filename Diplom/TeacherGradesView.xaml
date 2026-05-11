@@ -315,10 +315,6 @@
                             <TextBlock Text="2" FontWeight="SemiBold" 
                                        Foreground="#C62828" FontSize="14" Height="15"/>
                         </Border>
-                        <Border Background="#F3E5F5" CornerRadius="4" Padding="8,4">
-                            <TextBlock Text="Н" FontWeight="SemiBold" 
-                                       Foreground="#7B1FA2" FontSize="14" Height="15"/>
-                        </Border>
                     </StackPanel>
                 </StackPanel>
             </Grid>

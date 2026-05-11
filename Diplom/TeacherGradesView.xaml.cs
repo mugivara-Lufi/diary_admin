@@ -33,7 +33,7 @@ namespace Diplom
 
         // Валидные значения
         private static readonly HashSet<string> ValidGrades = new HashSet<string>
-        { "", "2", "3", "4", "5", "H", "h", "Н", "н" };
+        { "", "2", "3", "4", "5" };
 
         public TeacherGradesView()
         {
@@ -431,7 +431,6 @@ namespace Diplom
                 MessageBox.Show(
                     "Допустимые значения:\n" +
                     "• 2, 3, 4, 5 — оценки\n" +
-                    "• H — отсутствие\n" +
                     "• Пусто — нет оценки",
                     "Некорректное значение",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
